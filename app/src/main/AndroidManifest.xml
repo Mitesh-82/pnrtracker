@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.droidsoft.pnrtracker" >
+    package="com.droidsoft.pnrtracker">
 
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppTheme">
+
         <activity
-            android:name=".PNRView"
-            android:label="@string/app_name" >
-            <intent-filter>
+            android:name=".activities.PNRView"
+            android:label="@string/app_name">
+        <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -18,4 +19,5 @@
         </activity>
     </application>
 
+    <uses-permission android:name="android.permission.INTERNET" />
 </manifest>
