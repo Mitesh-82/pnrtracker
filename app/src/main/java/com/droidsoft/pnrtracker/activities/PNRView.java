@@ -8,6 +8,7 @@ import android.view.MenuItem;
 import android.widget.TextView;
 
 import com.droidsoft.pnrtracker.R;
+import com.droidsoft.pnrtracker.parser.TicketDataParser;
 
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.ResponseHandler;
@@ -78,7 +79,11 @@ public class PNRView extends Activity {
             HttpGet httpget = new HttpGet(url);
             ResponseHandler<String> responseHandler = new BasicResponseHandler();
             serverResponse = httpClient.execute(httpget, responseHandler);
+
+
             response = serverResponse;
+
+            TicketDataParser.readTicketResponse(serverResponse);
             return serverResponse;
         }
 
