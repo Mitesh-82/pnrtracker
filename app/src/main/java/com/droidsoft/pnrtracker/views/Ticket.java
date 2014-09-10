@@ -136,5 +136,13 @@ public class Ticket {
 
     class PassengerData {
         private String seatNumber, bookingStatus;
+
+        public String getSeatNumber() {
+            return seatNumber;
+        }
+
+        public String getBookingStatus() {
+            return bookingStatus;
+        }
     }
 }

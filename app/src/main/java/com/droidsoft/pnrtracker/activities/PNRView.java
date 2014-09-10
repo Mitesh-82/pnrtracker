@@ -1,14 +1,15 @@
 package com.droidsoft.pnrtracker.activities;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.TextView;
+import android.widget.RelativeLayout;
 
 import com.droidsoft.pnrtracker.R;
-import com.droidsoft.pnrtracker.parser.TicketDataParser;
+import com.droidsoft.pnrtracker.views.TicketWidget;
 
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.ResponseHandler;
@@ -20,14 +21,19 @@ import java.io.IOException;
 
 
 public class PNRView extends Activity {
+    Context context;
+    RelativeLayout layout;
 
-    private TextView pnrResponse;
+//    private TextView pnrResponse;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pnrview);
-        pnrResponse = (TextView) findViewById(R.id.textView);
+
+        context = this;
+        layout = (RelativeLayout) findViewById(R.id.baselayout);
+//        pnrResponse = (TextView) findViewById(R.id.textView);
 
         RetrievePERStatus getPnrStatus = new RetrievePERStatus();
 
@@ -57,6 +63,7 @@ public class PNRView extends Activity {
 
     class RetrievePERStatus extends AsyncTask<Void, Void, String> {
         String response;
+        TicketWidget ticketWidget;
 
         @Override
         protected String doInBackground(Void... voids) {
@@ -82,14 +89,15 @@ public class PNRView extends Activity {
 
 
             response = serverResponse;
+            ticketWidget = new TicketWidget(context, response);
 
-            TicketDataParser.readTicketResponse(serverResponse);
             return serverResponse;
         }
 
         @Override
         protected void onPostExecute(String s) {
-            pnrResponse.setText(response);
+//            pnrResponse.setText(response);
+            layout.addView(ticketWidget);
         }
     }
 }

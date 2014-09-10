@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 
 /**
  * Created by mitesh on 14. 9. 10.
@@ -43,7 +45,7 @@ public class TicketDataParser {
         reader.endArray();
     }
 
-    public static void readTicketResponse(String input) {
+    public static Ticket readTicketResponse(String input) {
 
         JsonReader jsonReader;
         String name, isValid;
@@ -69,13 +71,17 @@ public class TicketDataParser {
             jsonReader.endObject();
         } catch (IOException e) {
             e.printStackTrace();
+        } catch (ParseException e) {
+            e.printStackTrace();
         } finally {
 
         }
 
+        return ticket;
+
     }
 
-    private static void readTicketData(JsonReader jsonReader, Ticket ticket) throws IOException {
+    private static void readTicketData(JsonReader jsonReader, Ticket ticket) throws IOException, ParseException {
         String name;
 
         jsonReader.beginObject();
@@ -122,7 +128,7 @@ public class TicketDataParser {
 
         name = jsonReader.nextName(); //travel_date
         if (name.equals("travel_date")) {
-            readTrainNumber(jsonReader, ticket);
+            readTravelDate(jsonReader, ticket);
         }
 
         name = jsonReader.nextName(); //passenger
@@ -132,6 +138,14 @@ public class TicketDataParser {
 
 
         jsonReader.endObject();
+    }
+
+    private static void readTravelDate(JsonReader jsonReader, Ticket ticket) throws IOException, ParseException {
+        String data = jsonReader.nextString();
+
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-m-yyyy");
+
+        ticket.setTravelDate(sdf.parse(data));
     }
 
 
