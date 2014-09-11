@@ -143,7 +143,7 @@ public class TicketDataParser {
     private static void readTravelDate(JsonReader jsonReader, Ticket ticket) throws IOException, ParseException {
         String data = jsonReader.nextString();
 
-        SimpleDateFormat sdf = new SimpleDateFormat("dd-m-yyyy");
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-M-yyyy");
 
         ticket.setTravelDate(sdf.parse(data));
     }
