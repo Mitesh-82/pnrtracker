@@ -82,6 +82,19 @@ public class TicketDatabase {
         }
     }
 
+    public String getTicketData(String pnr) {
+        if (isTicketRecordPresent(pnr)) {
+            SQLiteDatabase db = dbhelper.getReadableDatabase();
+
+            String[] selectionArgs = {pnr};
+            Cursor cursor = db.query(TicketDBRecord.TABLE_NAME, projection, selection, selectionArgs, null, null, null);
+
+            cursor.moveToFirst();
+            String ticketdata = cursor.getString(1);
+            return ticketdata;
+        } else return null;
+    }
+
     public abstract class TicketDBRecord implements BaseColumns {
         public static final String TABLE_NAME = "TicketDB";
         public static final String COLUMN_NAME_PNRNO = "PNR_no";

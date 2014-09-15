@@ -20,12 +20,23 @@ public class TicketWidget extends LinearLayout {
         super(context);
 
         Ticket ticket = TicketDataParser.readTicketResponse(jsonTicketData);
+        initTicketWidget();
+        inflateTicketView(ticket, context);
+    }
 
+
+    public TicketWidget(Context context, Ticket ticket) {
+        super(context);
+        initTicketWidget();
+        inflateTicketView(ticket, context);
+    }
+
+    private void initTicketWidget() {
         this.setOrientation(LinearLayout.VERTICAL);
         LayoutParams layoutParams = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         this.setLayoutParams(layoutParams);
 
-        inflateTicketView(ticket, context);
+
     }
 
     private void inflateTicketView(Ticket ticket, Context context) {

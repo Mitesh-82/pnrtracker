@@ -1,7 +1,10 @@
 package com.droidsoft.pnrtracker.activities;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
@@ -9,6 +12,8 @@ import android.view.MenuItem;
 import android.widget.RelativeLayout;
 
 import com.droidsoft.pnrtracker.R;
+import com.droidsoft.pnrtracker.database.TicketDataFetcher;
+import com.droidsoft.pnrtracker.views.Ticket;
 import com.droidsoft.pnrtracker.views.TicketWidget;
 
 import org.apache.http.client.HttpClient;
@@ -23,8 +28,21 @@ import java.io.IOException;
 public class PNRView extends Activity {
     Context context;
     RelativeLayout layout;
+    TicketDataFetcher ticketDataFetcher;
+    private String pnr;
+    //    private TextView pnrResponse;
+    BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Bundle bundle = intent.getExtras();
 
-//    private TextView pnrResponse;
+            if (bundle.getString("PNR").equals(pnr)) {
+                Ticket ticket = (Ticket) bundle.getSerializable("DATA");
+
+                updateTicketView(ticket);
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,13 +51,43 @@ public class PNRView extends Activity {
 
         context = this;
         layout = (RelativeLayout) findViewById(R.id.baselayout);
-//        pnrResponse = (TextView) findViewById(R.id.textView);
 
-        RetrievePERStatus getPnrStatus = new RetrievePERStatus();
+//        RetrievePERStatus getPnrStatus = new RetrievePERStatus();
+//
+//        getPnrStatus.execute();
 
-        getPnrStatus.execute();
+        ticketDataFetcher = new TicketDataFetcher(context);
+
+
+        Ticket ticket = ticketDataFetcher.getTicketData("8726709666");
+
+        updateTicketView(ticket);
+
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        IntentFilter intentFilter = new IntentFilter(TicketDataFetcher.ACTION_PNR_DATA_AVAILABLE);
+        registerReceiver(broadcastReceiver, intentFilter);
+    }
+
+    private void updateTicketView(Ticket ticket) {
+
+        if ((ticket != null) && (ticket.getIsValid())) {
+            layout.removeAllViews();
+            TicketWidget ticketWidget = new TicketWidget(context, ticket);
+
+            layout.addView(ticketWidget);
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(broadcastReceiver);
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -96,7 +144,6 @@ public class PNRView extends Activity {
 
         @Override
         protected void onPostExecute(String s) {
-//            pnrResponse.setText(response);
             layout.addView(ticketWidget);
         }
     }

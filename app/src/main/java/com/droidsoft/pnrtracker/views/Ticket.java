@@ -1,13 +1,15 @@
 package com.droidsoft.pnrtracker.views;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 
 /**
  * Created by mitesh on 14. 9. 10.
  */
-public class Ticket {
+public class Ticket implements Serializable {
 
+    private static final long serialVersionUID = 3251254925733195351L;
     private Boolean isValid;
     private String pnrNo;
     private String trainName;
@@ -20,6 +22,7 @@ public class Ticket {
     private Date travelDate;
     private Date dataTime;
     private ArrayList<PassengerData> passengerData;
+
 
     public Ticket(Boolean isValid) {
         this.isValid = isValid;
@@ -134,7 +137,9 @@ public class Ticket {
         this.dataTime = dataTime;
     }
 
-    class PassengerData {
+    class PassengerData implements Serializable {
+
+        private static final long serialVersionUID = 7146366791438575635L;
         private String seatNumber, bookingStatus;
 
         public String getSeatNumber() {
