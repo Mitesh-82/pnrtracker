@@ -1,4 +1,4 @@
-package com.droidsoft.pnrtracker.views;
+package com.droidsoft.pnrtracker.parser;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -137,7 +137,7 @@ public class Ticket implements Serializable {
         this.dataTime = dataTime;
     }
 
-    class PassengerData implements Serializable {
+    public class PassengerData implements Serializable {
 
         private static final long serialVersionUID = 7146366791438575635L;
         private String seatNumber, bookingStatus;

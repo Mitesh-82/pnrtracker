@@ -4,8 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.droidsoft.pnrtracker.parser.Ticket;
 import com.droidsoft.pnrtracker.parser.TicketDataParser;
-import com.droidsoft.pnrtracker.views.Ticket;
 import com.droidsoft.pnrtracker.webinterface.HttpBasedTicketFetcher;
 
 import java.io.IOException;
@@ -15,6 +15,9 @@ import java.io.IOException;
  */
 public class TicketDataFetcher {
     public static final String ACTION_PNR_DATA_AVAILABLE = "com.droidsoft.pnrtracker.ACTION_PNR_DATA_AVAILABLE";
+    public static final String BUNDLE_KEY_PNR_DATA_DATAKEY = "DATA";
+    public static final String BUNDLE_KEY_PNR_DATA_PNRKEY = "PNR";
+
     private Context context;
     private TicketDatabase ticketDB;
     private HttpBasedTicketFetcher httpBasedTicketFetcher;
@@ -29,16 +32,8 @@ public class TicketDataFetcher {
         Ticket ticket = null;
 
         if (ticketDB.isTicketRecordPresent(pnr)) {
-            try {
-                ticket = TicketDataParser.readTicketResponse(ticketDB.getTicketData(pnr));
-            } catch (Exception e) {
-                WorkerThread thread = new WorkerThread(ticketDB, pnr, httpBasedTicketFetcher);
-                thread.start();
-                return ticket;
-            }
-
+            ticket = TicketDataParser.readTicketResponse(ticketDB.getTicketData(pnr));
         }
-
 
         WorkerThread thread = new WorkerThread(ticketDB, pnr, httpBasedTicketFetcher);
         thread.start();
@@ -49,8 +44,8 @@ public class TicketDataFetcher {
 
 
         Bundle bundle = new Bundle();
-        bundle.putString("PNR", ticket.getPnrNo());
-        bundle.putSerializable("DATA", ticket);
+        bundle.putString(BUNDLE_KEY_PNR_DATA_PNRKEY, ticket.getPnrNo());
+        bundle.putSerializable(BUNDLE_KEY_PNR_DATA_DATAKEY, ticket);
 
         Intent intent = new Intent(ACTION_PNR_DATA_AVAILABLE);
         intent.putExtras(bundle);

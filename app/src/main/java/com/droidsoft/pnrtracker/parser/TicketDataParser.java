@@ -2,8 +2,6 @@ package com.droidsoft.pnrtracker.parser;
 
 import android.util.JsonReader;
 
-import com.droidsoft.pnrtracker.views.Ticket;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
