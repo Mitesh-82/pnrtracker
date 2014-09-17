@@ -136,6 +136,8 @@ public class SyncDatabase {
         public static final int EVERY_1_HOUR = 60 * 1;
         public static final int EVERY_3_HOUR = 60 * 3;
         public static final int EVERY_DAY = 60 * 24;
+
+        public static final int MAX_INTERVAL = EVERY_DAY;
         public static final int NEVER = Integer.MAX_VALUE;
     }
 
