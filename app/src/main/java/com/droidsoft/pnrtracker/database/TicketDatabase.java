@@ -10,6 +10,14 @@ import android.provider.BaseColumns;
  * Created by mitesh.patel on 15-09-2014.
  */
 public class TicketDatabase {
+    static final String SQL_DELETE_TICKETDB_ENTRIES =
+            "DROP TABLE IF EXISTS " + TicketDBRecord.TABLE_NAME;
+    private static final String TEXT_TYPE = " TEXT";
+    private static final String COMMA_SEP = ",";
+    static final String SQL_CREATE_TICKETDB_ENTRIES =
+            "CREATE TABLE " + TicketDBRecord.TABLE_NAME + " (" +
+                    TicketDBRecord.COLUMN_NAME_PNRNO + TEXT_TYPE + COMMA_SEP +
+                    TicketDBRecord.COLUMN_NAME_TICKET_DATA + TEXT_TYPE + " )";
     private Context context;
     private TicketDBHelper dbhelper;
 
@@ -25,7 +33,7 @@ public class TicketDatabase {
         dbhelper = new TicketDBHelper(context);
     }
 
-    //    TODO:optimise isTicketRecordPresent to use arraylist
+    //    TODO:optimise isSyncRecordPresent to use arraylist
     public boolean isTicketRecordPresent(String pnr) {
         boolean isTicketPresent = false;
 
@@ -43,6 +51,7 @@ public class TicketDatabase {
         return isTicketPresent;
     }
 
+    //TODO: Remove Circular Dependency on isTicketRecordPresent from updateTicketRecord -> addTicketRecord & vice - versa
     public void addTicketRecord(String pnr, String pnrData) {
         if (isTicketRecordPresent(pnr)) {
             updateTicketRecord(pnr, pnrData);
@@ -52,13 +61,14 @@ public class TicketDatabase {
             values.put(TicketDBRecord.COLUMN_NAME_PNRNO, pnr);
             values.put(TicketDBRecord.COLUMN_NAME_TICKET_DATA, pnrData);
 
-            SQLiteDatabase db = dbhelper.getReadableDatabase();
+            SQLiteDatabase db = dbhelper.getWritableDatabase();
 
             db.insert(TicketDBRecord.TABLE_NAME, null, values);
 
         }
     }
 
+    //TODO: Remove Circular Dependency on isTicketRecordPresent from addTicketRecord -> updateTicketRecord & vice - versa
     public void updateTicketRecord(String pnr, String pnrData) {
 
         String[] selectionArgs = {pnr};
@@ -67,7 +77,7 @@ public class TicketDatabase {
             ContentValues values = new ContentValues();
             values.put(TicketDBRecord.COLUMN_NAME_TICKET_DATA, pnrData);
 
-            SQLiteDatabase db = dbhelper.getReadableDatabase();
+            SQLiteDatabase db = dbhelper.getWritableDatabase();
             db.update(TicketDBRecord.TABLE_NAME, values, selection, selectionArgs);
         } else {
             addTicketRecord(pnr, pnrData);
@@ -77,7 +87,7 @@ public class TicketDatabase {
     public void delTicketRecord(String pnr) {
         if (isTicketRecordPresent(pnr)) {
             String[] selectionArgs = {pnr};
-            SQLiteDatabase db = dbhelper.getReadableDatabase();
+            SQLiteDatabase db = dbhelper.getWritableDatabase();
             db.delete(TicketDBRecord.TABLE_NAME, selection, selectionArgs);
         }
     }

@@ -11,26 +11,17 @@ public class TicketDBHelper extends SQLiteOpenHelper {
     public static final int DATABASE_VERSION = 1;
     public static final String DATABASE_NAME = "FeedReader.db";
 
-    private static final String TEXT_TYPE = " TEXT";
-    private static final String COMMA_SEP = ",";
-
-    private static final String SQL_CREATE_TICKETDB_ENTRIES =
-            "CREATE TABLE " + TicketDatabase.TicketDBRecord.TABLE_NAME + " (" +
-                    TicketDatabase.TicketDBRecord.COLUMN_NAME_PNRNO + TEXT_TYPE + COMMA_SEP +
-                    TicketDatabase.TicketDBRecord.COLUMN_NAME_TICKET_DATA + TEXT_TYPE + " )";
-
-    private static final String SQL_DELETE_ENTRIES =
-            "DROP TABLE IF EXISTS " + TicketDatabase.TicketDBRecord.TABLE_NAME;
-
     public TicketDBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL(SQL_CREATE_TICKETDB_ENTRIES);
+        db.execSQL(TicketDatabase.SQL_CREATE_TICKETDB_ENTRIES);
+        db.execSQL(SyncDatabase.SQL_CREATE_SYNCDB_ENTRIES);
 
     }
+
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
