@@ -23,12 +23,19 @@
         android:inputType="number" />
 
     <ImageButton
+        android:id="@+id/imageButton_SyncAll"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:src="@android:drawable/ic_popup_sync" />
+
+    <ImageButton
         android:id="@+id/buttonSearchPNR"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignEnd="@+id/listView_tickets"
         android:layout_alignParentTop="true"
-        android:layout_alignRight="@+id/listView_tickets"
+        android:layout_toLeftOf="@id/imageButton_SyncAll"
         android:src="@android:drawable/ic_menu_search" />
 
 
