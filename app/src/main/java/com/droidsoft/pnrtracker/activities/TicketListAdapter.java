@@ -1,6 +1,8 @@
 package com.droidsoft.pnrtracker.activities;
 
 import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -94,5 +96,14 @@ public class TicketListAdapter extends BaseAdapter implements AdapterView.OnItem
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        Intent intent = new Intent();
+        intent.setClass(context, TicketViewActivity.class);
+
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(TicketDataFetcher.BUNDLE_KEY_PNR_DATA_DATAKEY, ticketList.get(position));
+
+        intent.putExtras(bundle);
+
+        context.startActivity(intent);
     }
 }

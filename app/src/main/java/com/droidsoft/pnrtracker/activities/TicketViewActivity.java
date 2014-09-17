@@ -45,11 +45,18 @@ public class TicketViewActivity extends Activity {
 
         ticketDataFetcher = new TicketDataFetcher(context);
 
-        //TODO: remove Hardcoding
-        Ticket ticket = ticketDataFetcher.getTicketDataFromServer("8726709666");
+        Bundle bundle = getIntent().getExtras();
+
+        Ticket ticket = (Ticket) bundle.getSerializable(TicketDataFetcher.BUNDLE_KEY_PNR_DATA_DATAKEY);
+        if (ticket == null) {
+            String pnr = bundle.getString(TicketDataFetcher.BUNDLE_KEY_PNR_DATA_PNRKEY);
+            ticket = ticketDataFetcher.getTicketDataFromServer(pnr);
+        }
+
         updateTicketView(ticket);
 
     }
+
 
     @Override
     protected void onResume() {

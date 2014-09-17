@@ -119,6 +119,14 @@ public class Ticket implements Serializable, Comparable<Ticket> {
         pd.seatNumber = seatNumber;
         pd.bookingStatus = status;
 
+        if (status.contains("W/L")) {
+            pd.statusType = PassengerData.STATUS_WAITING;
+        } else if (status.contains("RAC")) {
+            pd.statusType = PassengerData.STATUS_RAC;
+        } else {
+            pd.statusType = PassengerData.STATUS_CONFIRMED;
+        }
+
         passengerData.add(pd);
     }
 
@@ -145,8 +153,18 @@ public class Ticket implements Serializable, Comparable<Ticket> {
 
     public class PassengerData implements Serializable {
 
+        public static final int STATUS_CONFIRMED = 0;
+        public static final int STATUS_RAC = 1;
+        public static final int STATUS_WAITING = 2;
+
+
         private static final long serialVersionUID = 7146366791438575635L;
         private String seatNumber, bookingStatus;
+        private int statusType;
+
+        public int getStatusType() {
+            return statusType;
+        }
 
         public String getSeatNumber() {
             return seatNumber;
