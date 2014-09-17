@@ -9,6 +9,7 @@ import com.droidsoft.pnrtracker.parser.TicketDataParser;
 import com.droidsoft.pnrtracker.webinterface.HttpBasedTicketFetcher;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  * Created by mitesh.patel on 15-09-2014.
@@ -28,7 +29,7 @@ public class TicketDataFetcher {
         httpBasedTicketFetcher = new HttpBasedTicketFetcher(context);
     }
 
-    public Ticket getTicketData(String pnr) {
+    public Ticket getTicketDataFromServer(String pnr) {
         Ticket ticket = null;
 
         if (ticketDB.isTicketRecordPresent(pnr)) {
@@ -38,6 +39,20 @@ public class TicketDataFetcher {
         WorkerThread thread = new WorkerThread(ticketDB, pnr, httpBasedTicketFetcher);
         thread.start();
         return ticket;
+    }
+
+    public ArrayList<Ticket> getAllTicketData() {
+        ArrayList<Ticket> tickets = new ArrayList<Ticket>();
+
+        ArrayList<String> ticketData = ticketDB.getAllTicketRecords();
+
+        if (!ticketData.isEmpty()) {
+            for (String ticketStr : ticketData) {
+                tickets.add(TicketDataParser.readTicketResponse(ticketStr));
+            }
+        }
+
+        return tickets;
     }
 
     public void broadcastTicketData(Ticket ticket) {
@@ -65,8 +80,6 @@ public class TicketDataFetcher {
             this.ticketDatabase = ticketDatabase;
             Pnr = pnr;
             this.httpBasedTicketFetcher = httpBasedTicketFetcher;
-
-
         }
 
         @Override

@@ -16,7 +16,7 @@ import com.droidsoft.pnrtracker.parser.Ticket;
 import com.droidsoft.pnrtracker.views.TicketWidget;
 
 
-public class PNRView extends Activity {
+public class TicketViewActivity extends Activity {
     Context context;
     RelativeLayout layout;
     TicketDataFetcher ticketDataFetcher;
@@ -46,7 +46,7 @@ public class PNRView extends Activity {
         ticketDataFetcher = new TicketDataFetcher(context);
 
         //TODO: remove Hardcoding
-        Ticket ticket = ticketDataFetcher.getTicketData("8726709666");
+        Ticket ticket = ticketDataFetcher.getTicketDataFromServer("8726709666");
         updateTicketView(ticket);
 
     }

@@ -7,7 +7,7 @@ import java.util.Date;
 /**
  * Created by mitesh on 14. 9. 10.
  */
-public class Ticket implements Serializable {
+public class Ticket implements Serializable, Comparable<Ticket> {
 
     private static final long serialVersionUID = 3251254925733195351L;
     private Boolean isValid;
@@ -136,6 +136,12 @@ public class Ticket implements Serializable {
     public void setDataTime(Date dataTime) {
         this.dataTime = dataTime;
     }
+
+    @Override
+    public int compareTo(Ticket another) {
+        return travelDate.compareTo(another.getTravelDate());
+    }
+
 
     public class PassengerData implements Serializable {
 

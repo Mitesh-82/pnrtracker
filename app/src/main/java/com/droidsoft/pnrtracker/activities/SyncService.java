@@ -69,7 +69,7 @@ public class SyncService extends Service {
             syncCounter = 0;
 
         for (String pnr : pnrsforSync) {
-            dataFetcher.getTicketData(pnr);
+            dataFetcher.getTicketDataFromServer(pnr);
         }
 
     }

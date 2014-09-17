@@ -6,6 +6,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.provider.BaseColumns;
 
+import java.util.ArrayList;
+
 /**
  * Created by mitesh.patel on 15-09-2014.
  */
@@ -92,6 +94,28 @@ public class TicketDatabase {
         }
     }
 
+    public ArrayList<String> getAllTicketRecords() {
+        ArrayList<String> ticketData = new ArrayList<String>();
+
+        String[] projection = {
+                TicketDBRecord.COLUMN_NAME_TICKET_DATA};
+
+        SQLiteDatabase db = dbhelper.getReadableDatabase();
+
+        Cursor cursor = db.query(TicketDBRecord.TABLE_NAME, projection, null, null, null, null, null);
+
+        cursor.moveToLast();
+
+        while (!cursor.isBeforeFirst()) {
+            ticketData.add(cursor.getString(0));
+            cursor.moveToPrevious();
+        }
+
+        cursor.close();
+
+        return ticketData;
+    }
+
     public String getTicketData(String pnr) {
         if (isTicketRecordPresent(pnr)) {
             SQLiteDatabase db = dbhelper.getReadableDatabase();
@@ -100,8 +124,7 @@ public class TicketDatabase {
             Cursor cursor = db.query(TicketDBRecord.TABLE_NAME, projection, selection, selectionArgs, null, null, null);
 
             cursor.moveToFirst();
-            String ticketdata = cursor.getString(1);
-            return ticketdata;
+            return cursor.getString(1);
         } else return null;
     }
 
