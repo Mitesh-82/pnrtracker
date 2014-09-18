@@ -1,4 +1,4 @@
-package com.droidsoft.pnrtracker.activities;
+package com.droidsoft.pnrtracker.ui.views;
 
 import android.content.Context;
 import android.content.Intent;
@@ -12,7 +12,8 @@ import android.widget.TextView;
 
 import com.droidsoft.pnrtracker.R;
 import com.droidsoft.pnrtracker.database.TicketDataFetcher;
-import com.droidsoft.pnrtracker.parser.Ticket;
+import com.droidsoft.pnrtracker.datatypes.Ticket;
+import com.droidsoft.pnrtracker.ui.activities.TicketViewActivity;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -72,6 +73,7 @@ public class TicketListAdapter extends BaseAdapter implements AdapterView.OnItem
             TextView dojText = (TextView) v.findViewById(R.id.textView_DOJ);
             TextView sourceText = (TextView) v.findViewById(R.id.textView_source);
             TextView destText = (TextView) v.findViewById(R.id.textView_destination);
+            PieChartView pieChartView = (PieChartView) v.findViewById(R.id.percentview);
 
             if (pnrText != null) {
                 pnrText.setText(ticket.getPnrNo());
@@ -88,6 +90,10 @@ public class TicketListAdapter extends BaseAdapter implements AdapterView.OnItem
             if (sourceText != null) {
 
                 sourceText.setText(ticket.getFromStation());
+            }
+
+            if (pieChartView != null) {
+                pieChartView.setPassengerStatus(ticket.getPassengerCount(), ticket.getRacCount(), ticket.getWaitingCount());
             }
         }
 

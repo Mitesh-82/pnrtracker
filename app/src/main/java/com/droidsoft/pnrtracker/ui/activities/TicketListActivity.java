@@ -1,4 +1,4 @@
-package com.droidsoft.pnrtracker.activities;
+package com.droidsoft.pnrtracker.ui.activities;
 
 import android.app.Activity;
 import android.content.Context;
@@ -14,6 +14,7 @@ import android.widget.ListView;
 
 import com.droidsoft.pnrtracker.R;
 import com.droidsoft.pnrtracker.database.TicketDataFetcher;
+import com.droidsoft.pnrtracker.ui.views.TicketListAdapter;
 
 public class TicketListActivity extends Activity implements View.OnClickListener {
 
@@ -35,6 +36,7 @@ public class TicketListActivity extends Activity implements View.OnClickListener
 
         editTextPnrSearch.setFilters(new InputFilter[]{new InputFilter.LengthFilter(10)});
         buttonSearchPnr.setOnClickListener(this);
+
 
         TicketListAdapter ticketListAdapter = new TicketListAdapter(this);
         ticketListView.setAdapter(ticketListAdapter);

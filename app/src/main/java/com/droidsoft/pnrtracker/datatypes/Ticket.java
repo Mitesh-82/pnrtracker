@@ -1,4 +1,4 @@
-package com.droidsoft.pnrtracker.parser;
+package com.droidsoft.pnrtracker.datatypes;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -21,13 +21,22 @@ public class Ticket implements Serializable, Comparable<Ticket> {
     private String reservationClass;
     private Date travelDate;
     private Date dataTime;
+    private int racCount;
+    private int waitingCount;
     private ArrayList<PassengerData> passengerData;
-
 
     public Ticket(Boolean isValid) {
         this.isValid = isValid;
 
         passengerData = new ArrayList<PassengerData>();
+    }
+
+    public int getRacCount() {
+        return racCount;
+    }
+
+    public int getWaitingCount() {
+        return waitingCount;
     }
 
     public Boolean getIsValid() {
@@ -121,8 +130,10 @@ public class Ticket implements Serializable, Comparable<Ticket> {
 
         if (status.contains("W/L")) {
             pd.statusType = PassengerData.STATUS_WAITING;
+            waitingCount++;
         } else if (status.contains("RAC")) {
             pd.statusType = PassengerData.STATUS_RAC;
+            racCount++;
         } else {
             pd.statusType = PassengerData.STATUS_CONFIRMED;
         }

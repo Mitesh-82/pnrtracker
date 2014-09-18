@@ -8,16 +8,16 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".activities.TicketViewActivity"
+            android:name=".ui.activities.TicketViewActivity"
             android:label="@string/app_name"></activity>
 
         <service
-            android:name=".activities.SyncService"
+            android:name=".ui.SyncService"
             android:enabled="true"
             android:exported="true" />
 
         <activity
-            android:name=".activities.TicketListActivity"
+            android:name=".ui.activities.TicketListActivity"
             android:label="@string/title_activity_ticket_list">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

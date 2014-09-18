@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.droidsoft.pnrtracker.parser.Ticket;
+import com.droidsoft.pnrtracker.datatypes.Ticket;
 import com.droidsoft.pnrtracker.parser.TicketDataParser;
 import com.droidsoft.pnrtracker.webinterface.HttpBasedTicketFetcher;
 

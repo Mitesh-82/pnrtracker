@@ -1,4 +1,4 @@
-package com.droidsoft.pnrtracker.views;
+package com.droidsoft.pnrtracker.ui.views;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -6,7 +6,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.droidsoft.pnrtracker.parser.Ticket;
+import com.droidsoft.pnrtracker.datatypes.Ticket;
 import com.droidsoft.pnrtracker.parser.TicketDataParser;
 
 import java.text.SimpleDateFormat;

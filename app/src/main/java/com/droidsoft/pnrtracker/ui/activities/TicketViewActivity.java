@@ -1,4 +1,4 @@
-package com.droidsoft.pnrtracker.activities;
+package com.droidsoft.pnrtracker.ui.activities;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -12,8 +12,8 @@ import android.widget.RelativeLayout;
 
 import com.droidsoft.pnrtracker.R;
 import com.droidsoft.pnrtracker.database.TicketDataFetcher;
-import com.droidsoft.pnrtracker.parser.Ticket;
-import com.droidsoft.pnrtracker.views.TicketWidget;
+import com.droidsoft.pnrtracker.datatypes.Ticket;
+import com.droidsoft.pnrtracker.ui.views.TicketWidget;
 
 
 public class TicketViewActivity extends Activity {

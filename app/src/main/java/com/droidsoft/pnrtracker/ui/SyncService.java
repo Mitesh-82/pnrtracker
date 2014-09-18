@@ -1,4 +1,4 @@
-package com.droidsoft.pnrtracker.activities;
+package com.droidsoft.pnrtracker.ui;
 
 import android.app.Service;
 import android.content.Context;
