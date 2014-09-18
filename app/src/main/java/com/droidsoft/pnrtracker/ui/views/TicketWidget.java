@@ -7,7 +7,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.droidsoft.pnrtracker.datatypes.Ticket;
-import com.droidsoft.pnrtracker.parser.TicketDataParser;
+import com.droidsoft.pnrtracker.parser.JsonResponseParser;
 
 import java.text.SimpleDateFormat;
 
@@ -20,7 +20,7 @@ public class TicketWidget extends LinearLayout {
     public TicketWidget(Context context, String jsonTicketData) {
         super(context);
 
-        Ticket ticket = TicketDataParser.readTicketResponse(jsonTicketData);
+        Ticket ticket = JsonResponseParser.readTicketResponse(jsonTicketData);
         initTicketWidget();
         inflateTicketView(ticket, context);
     }

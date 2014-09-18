@@ -15,7 +15,7 @@ import java.text.SimpleDateFormat;
 /**
  * Created by mitesh on 14. 9. 10.
  */
-public class TicketDataParser {
+public class JsonResponseParser {
 
 
     private static void readPassengerData(JsonReader reader, Ticket ticket) throws IOException {

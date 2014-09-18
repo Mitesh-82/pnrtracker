@@ -1,39 +1,29 @@
 package com.droidsoft.pnrtracker.ui.activities;
 
 import android.app.Activity;
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.RelativeLayout;
 
 import com.droidsoft.pnrtracker.R;
-import com.droidsoft.pnrtracker.database.TicketDataFetcher;
+import com.droidsoft.pnrtracker.database.DBBroker;
+import com.droidsoft.pnrtracker.database.SimpleSync;
+import com.droidsoft.pnrtracker.database.SyncInterface;
+import com.droidsoft.pnrtracker.database.SyncListener;
 import com.droidsoft.pnrtracker.datatypes.Ticket;
 import com.droidsoft.pnrtracker.ui.views.TicketWidget;
 
 
-public class TicketViewActivity extends Activity {
+public class TicketViewActivity extends Activity implements SyncListener {
     Context context;
     RelativeLayout layout;
-    TicketDataFetcher ticketDataFetcher;
+    ActivityHandler handler = new ActivityHandler();
     private String pnr;
-
-    BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            Bundle bundle = intent.getExtras();
-
-            if (bundle.getString(TicketDataFetcher.BUNDLE_KEY_PNR_DATA_PNRKEY).equals(pnr)) {
-                Ticket ticket = (Ticket) bundle.getSerializable(TicketDataFetcher.BUNDLE_KEY_PNR_DATA_DATAKEY);
-
-                updateTicketView(ticket);
-            }
-        }
-    };
+    private SyncInterface syncInterface;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,27 +33,25 @@ public class TicketViewActivity extends Activity {
         context = this;
         layout = (RelativeLayout) findViewById(R.id.baselayout);
 
-        ticketDataFetcher = new TicketDataFetcher(context);
+        syncInterface = SimpleSync.createSimpleSync(context);
+        syncInterface.registerListener(this);
 
-        Bundle bundle = getIntent().getExtras();
-
-        Ticket ticket = (Ticket) bundle.getSerializable(TicketDataFetcher.BUNDLE_KEY_PNR_DATA_DATAKEY);
+        Ticket ticket = (Ticket) getIntent().getExtras().getSerializable(DBBroker.BUNDLE_KEY_PNR_DATA_DATAKEY);
+        //if there is no Ticket from previous activity it means we need to request from server
         if (ticket == null) {
-            String pnr = bundle.getString(TicketDataFetcher.BUNDLE_KEY_PNR_DATA_PNRKEY);
-            ticket = ticketDataFetcher.getTicketDataFromServer(pnr);
-        }
+            String pnr = getIntent().getExtras().getString(DBBroker.BUNDLE_KEY_PNR_DATA_PNRKEY);
 
-        updateTicketView(ticket);
-
+            syncInterface.doServerRequest(pnr);
+        } else
+            updateTicketView(ticket);
     }
 
-
     @Override
-    protected void onResume() {
-        super.onResume();
-
-        IntentFilter intentFilter = new IntentFilter(TicketDataFetcher.ACTION_PNR_DATA_AVAILABLE);
-        registerReceiver(broadcastReceiver, intentFilter);
+    protected void onDestroy() {
+        super.onDestroy();
+        if (syncInterface != null) {
+            syncInterface.removeListener(this);
+        }
     }
 
     private void updateTicketView(Ticket ticket) {
@@ -76,11 +64,6 @@ public class TicketViewActivity extends Activity {
         }
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        unregisterReceiver(broadcastReceiver);
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -100,5 +83,31 @@ public class TicketViewActivity extends Activity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onSyncComplete(Ticket ticket, String responseJson) {
+        Message msg = handler.obtainMessage(ActivityHandler.MSG_UPDATE_VIEW, ticket);
+
+        handler.sendMessage(msg);
+    }
+
+    @Override
+    public void onSyncError(Exception exception) {
+
+    }
+
+    class ActivityHandler extends Handler {
+        public static final int MSG_UPDATE_VIEW = 0;
+
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+
+            switch (msg.what) {
+                case MSG_UPDATE_VIEW:
+                    updateTicketView((Ticket) msg.obj);
+            }
+        }
     }
 }

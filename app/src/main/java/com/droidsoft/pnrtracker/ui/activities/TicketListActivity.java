@@ -13,7 +13,7 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 
 import com.droidsoft.pnrtracker.R;
-import com.droidsoft.pnrtracker.database.TicketDataFetcher;
+import com.droidsoft.pnrtracker.database.DBBroker;
 import com.droidsoft.pnrtracker.ui.views.TicketListAdapter;
 
 public class TicketListActivity extends Activity implements View.OnClickListener {
@@ -70,7 +70,7 @@ public class TicketListActivity extends Activity implements View.OnClickListener
                 Intent intent = new Intent(context, TicketViewActivity.class);
 
                 Bundle bundle = new Bundle();
-                bundle.putString(TicketDataFetcher.BUNDLE_KEY_PNR_DATA_PNRKEY, editTextPnrSearch.getText().toString());
+                bundle.putString(DBBroker.BUNDLE_KEY_PNR_DATA_PNRKEY, editTextPnrSearch.getText().toString());
 
                 intent.putExtras(bundle);
 

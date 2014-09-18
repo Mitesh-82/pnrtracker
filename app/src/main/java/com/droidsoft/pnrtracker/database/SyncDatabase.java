@@ -23,15 +23,14 @@ public class SyncDatabase {
                     SyncDBRecord.COLUMN_NAME_PNRNO + TEXT_TYPE + COMMA_SEP +
                     SyncDBRecord.COLUMN_NAME_SYNC_DATA + INT_TYPE + " )";
     private Context context;
-    private TicketDBHelper dbhelper;
+    private DBHelper dbhelper;
 
     public SyncDatabase(Context context) {
         this.context = context;
 
-        dbhelper = new TicketDBHelper(context);
+        dbhelper = new DBHelper(context);
     }
 
-    //    TODO:optimise isSyncRecordPresent to use arraylist
     public boolean isSyncRecordPresent(String pnr) {
         String[] projection = {SyncDBRecord.COLUMN_NAME_PNRNO};
         String selection = SyncDBRecord.COLUMN_NAME_PNRNO + " LIKE ?";
@@ -76,10 +75,9 @@ public class SyncDatabase {
         return Pnrs;
     }
 
-    //TODO: Remove Circular Dependency on isSyncRecordPresent from addPnr-> updateSyncRecord & vice - versa
     public void addPnr(String pnr, int syncInterval) {
 
-        if ((pnr == null) || pnr.isEmpty() || (syncInterval == SyncIntervals.NEVER)) {
+        if ((pnr == null) || pnr.isEmpty() || (syncInterval == SyncInterface.SyncIntervals.NEVER)) {
             return;
         }
 
@@ -99,20 +97,17 @@ public class SyncDatabase {
 
     }
 
-    //TODO: Remove Circular Dependency on isSyncRecordPresent from updateSyncRecord -> addPnr& vice - versa
-    public void updateSyncRecord(String pnr, int interval) {
+    private void updateSyncRecord(String pnr, int interval) {
         String selection = SyncDBRecord.COLUMN_NAME_PNRNO + " LIKE ?";
         String[] selectionArgs = {pnr};
 
-        if (isSyncRecordPresent(pnr)) {
-            ContentValues values = new ContentValues();
-            values.put(SyncDBRecord.COLUMN_NAME_SYNC_DATA, interval);
 
-            SQLiteDatabase db = dbhelper.getWritableDatabase();
-            db.update(SyncDBRecord.TABLE_NAME, values, selection, selectionArgs);
-        } else {
-            addPnr(pnr, interval);
-        }
+        ContentValues values = new ContentValues();
+        values.put(SyncDBRecord.COLUMN_NAME_SYNC_DATA, interval);
+
+        SQLiteDatabase db = dbhelper.getWritableDatabase();
+        db.update(SyncDBRecord.TABLE_NAME, values, selection, selectionArgs);
+
     }
 
     public void delPnr(String pnr) {
@@ -130,16 +125,7 @@ public class SyncDatabase {
         public static final String COLUMN_NAME_SYNC_DATA = "Sync_Data";
     }
 
-    public class SyncIntervals {
-        public static final int EVERY_15_MINUTES = 15;
-        public static final int EVERY_30_MINUTES = 30;
-        public static final int EVERY_1_HOUR = 60 * 1;
-        public static final int EVERY_3_HOUR = 60 * 3;
-        public static final int EVERY_DAY = 60 * 24;
 
-        public static final int MAX_INTERVAL = EVERY_DAY;
-        public static final int NEVER = Integer.MAX_VALUE;
-    }
 
 
 }

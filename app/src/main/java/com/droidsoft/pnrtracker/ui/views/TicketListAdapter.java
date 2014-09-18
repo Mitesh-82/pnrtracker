@@ -11,7 +11,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.droidsoft.pnrtracker.R;
-import com.droidsoft.pnrtracker.database.TicketDataFetcher;
+import com.droidsoft.pnrtracker.database.DBBroker;
 import com.droidsoft.pnrtracker.datatypes.Ticket;
 import com.droidsoft.pnrtracker.ui.activities.TicketViewActivity;
 
@@ -23,7 +23,7 @@ import java.util.Collections;
  * Created by mitesh.patel on 17-09-2014.
  */
 public class TicketListAdapter extends BaseAdapter implements AdapterView.OnItemClickListener {
-    TicketDataFetcher ticketDataFetcher;
+    DBBroker DBBroker;
     ArrayList<Ticket> ticketList;
     private Context context;
 
@@ -31,8 +31,8 @@ public class TicketListAdapter extends BaseAdapter implements AdapterView.OnItem
     public TicketListAdapter(Context context) {
         this.context = context;
 
-        ticketDataFetcher = new TicketDataFetcher(context);
-        ticketList = ticketDataFetcher.getAllTicketData();
+        DBBroker = DBBroker.createDataFetcher(context);
+        ticketList = DBBroker.getAllTickets();
 
         Collections.sort(ticketList);
     }
@@ -106,7 +106,7 @@ public class TicketListAdapter extends BaseAdapter implements AdapterView.OnItem
         intent.setClass(context, TicketViewActivity.class);
 
         Bundle bundle = new Bundle();
-        bundle.putSerializable(TicketDataFetcher.BUNDLE_KEY_PNR_DATA_DATAKEY, ticketList.get(position));
+        bundle.putSerializable(DBBroker.BUNDLE_KEY_PNR_DATA_DATAKEY, ticketList.get(position));
 
         intent.putExtras(bundle);
 
