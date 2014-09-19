@@ -17,6 +17,7 @@ public class SimpleSync extends SyncInterface {
     Context context;
     private HttpBasedTicketFetcher httpBasedTicketFetcher;
     private SyncDatabase syncDatabase;
+    private int requestCounter = 0;
 
 
     private SimpleSync(Context context) {
@@ -45,6 +46,11 @@ public class SimpleSync extends SyncInterface {
 
     @Override
     public void doServerRequest(String pnrNo) {
+
+        requestCounter++;
+        for (SyncListener syncListener : syncListeners) {
+            syncListener.onSyncStart();
+        }
 
         WorkerThread thread = new WorkerThread(pnrNo, httpBasedTicketFetcher);
         thread.start();
@@ -78,6 +84,12 @@ public class SimpleSync extends SyncInterface {
             } catch (IOException e) {
                 for (SyncListener syncListener : syncListeners)
                     syncListener.onSyncError(e);
+            } finally {
+                requestCounter--;
+                if (requestCounter == 0) {
+                    for (SyncListener syncListener : syncListeners)
+                        syncListener.onSyncEnd();
+                }
             }
         }
     }

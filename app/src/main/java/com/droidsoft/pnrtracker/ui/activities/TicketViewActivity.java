@@ -86,6 +86,16 @@ public class TicketViewActivity extends Activity implements SyncListener {
     }
 
     @Override
+    public void onSyncStart() {
+
+    }
+
+    @Override
+    public void onSyncEnd() {
+
+    }
+
+    @Override
     public void onSyncComplete(Ticket ticket, String responseJson) {
         Message msg = handler.obtainMessage(ActivityHandler.MSG_UPDATE_VIEW, ticket);
 

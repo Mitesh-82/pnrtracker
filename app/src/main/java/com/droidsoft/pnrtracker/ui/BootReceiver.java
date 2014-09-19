@@ -7,12 +7,12 @@ import android.content.Intent;
 /**
  * Created by mitesh.patel on 17-09-2014.
  */
-public class BootReciever extends BroadcastReceiver {
+public class BootReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
-        Intent intentstartService = new Intent(context, SyncService.class);
+        Intent intentStartService = new Intent(context, SyncService.class);
 
-        context.startService(intentstartService);
+        context.startService(intentStartService);
     }
 
 

@@ -52,10 +52,22 @@ public class DBBroker implements SyncListener {
 
 
     @Override
+    public void onSyncStart() {
+
+    }
+
+    @Override
+    public void onSyncEnd() {
+
+    }
+
+    @Override
     public void onSyncComplete(Ticket ticket, String responseJson) {
         if ((ticket != null) && (responseJson != null) &&
                 (ticket.getIsValid()) && (!responseJson.isEmpty())) {
-            ticketDB.addTicketRecord(ticket.getPnrNo(), responseJson);
+            synchronized (ticketDB) {
+                ticketDB.addTicketRecord(ticket.getPnrNo(), responseJson);
+            }
         }
     }
 
