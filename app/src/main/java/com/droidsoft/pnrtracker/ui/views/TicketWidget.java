@@ -15,7 +15,6 @@ import java.text.SimpleDateFormat;
  * Created by mitesh on 14. 9. 10.
  */
 public class TicketWidget extends LinearLayout {
-    private final int MARGINS = 4;
 
     public TicketWidget(Context context, String jsonTicketData) {
         super(context);
@@ -106,6 +105,7 @@ public class TicketWidget extends LinearLayout {
         TextView textView;
         LayoutParams layoutParams = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         layoutParams.weight = 1;
+        int MARGINS = 4;
         layoutParams.setMargins(0, MARGINS, 0, MARGINS);
         textView = new TextView(context);
         textView.setLayoutParams(layoutParams);

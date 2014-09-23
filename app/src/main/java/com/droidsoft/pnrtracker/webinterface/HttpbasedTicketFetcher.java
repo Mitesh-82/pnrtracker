@@ -1,7 +1,5 @@
 package com.droidsoft.pnrtracker.webinterface;
 
-import android.content.Context;
-
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpGet;
@@ -14,23 +12,15 @@ import java.io.IOException;
  * Created by mitesh.patel on 15-09-2014.
  */
 public class HttpBasedTicketFetcher {
-    private Context context;
 
     private HttpClient httpClient;
-    private String url;
-    private HttpGet httpget;
-
-    public HttpBasedTicketFetcher(Context context) {
-        this.context = context;
-        httpClient = new DefaultHttpClient();
-
-    }
 
     public String getTicketData(String pnr) throws IOException {
         String serverResponse = "";
 
-        url = "http://www.kirant400.com/irctc/pnr.php?pnrno=" + pnr + "&rtype=JSON";
-        httpget = new HttpGet(url);
+        httpClient = new DefaultHttpClient();
+        String url = "http://www.kirant400.com/irctc/pnr.php?pnrno=" + pnr + "&rtype=JSON";
+        HttpGet httpget = new HttpGet(url);
 
         ResponseHandler<String> responseHandler = new BasicResponseHandler();
         serverResponse = httpClient.execute(httpget, responseHandler);

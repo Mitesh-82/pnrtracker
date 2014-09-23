@@ -23,7 +23,7 @@ import java.util.Collections;
  * Created by mitesh.patel on 17-09-2014.
  */
 public class TicketListAdapter extends BaseAdapter implements AdapterView.OnItemClickListener {
-    DBBroker DBBroker;
+    DBBroker dbBroker;
     ArrayList<Ticket> ticketList;
     private Context context;
 
@@ -31,8 +31,8 @@ public class TicketListAdapter extends BaseAdapter implements AdapterView.OnItem
     public TicketListAdapter(Context context) {
         this.context = context;
 
-        DBBroker = DBBroker.createDataFetcher(context);
-        ticketList = DBBroker.getAllTickets();
+        dbBroker = DBBroker.createDataFetcher(context);
+        ticketList = dbBroker.getAllTickets();
 
         Collections.sort(ticketList);
     }
@@ -106,7 +106,7 @@ public class TicketListAdapter extends BaseAdapter implements AdapterView.OnItem
         intent.setClass(context, TicketViewActivity.class);
 
         Bundle bundle = new Bundle();
-        bundle.putSerializable(DBBroker.BUNDLE_KEY_PNR_DATA_DATAKEY, ticketList.get(position));
+        bundle.putSerializable(dbBroker.BUNDLE_KEY_PNR_DATA_DATAKEY, ticketList.get(position));
 
         intent.putExtras(bundle);
 

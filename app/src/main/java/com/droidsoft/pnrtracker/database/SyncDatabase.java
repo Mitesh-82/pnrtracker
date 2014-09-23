@@ -22,11 +22,9 @@ public class SyncDatabase {
             "CREATE TABLE " + SyncDBRecord.TABLE_NAME + " (" +
                     SyncDBRecord.COLUMN_NAME_PNRNO + TEXT_TYPE + COMMA_SEP +
                     SyncDBRecord.COLUMN_NAME_SYNC_DATA + INT_TYPE + " )";
-    private Context context;
     private DBHelper dbhelper;
 
     public SyncDatabase(Context context) {
-        this.context = context;
 
         dbhelper = new DBHelper(context);
     }
@@ -124,8 +122,6 @@ public class SyncDatabase {
         public static final String COLUMN_NAME_PNRNO = "PNR_no";
         public static final String COLUMN_NAME_SYNC_DATA = "Sync_Data";
     }
-
-
 
 
 }

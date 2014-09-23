@@ -15,13 +15,10 @@ public class DBBroker implements SyncListener {
     public static final String BUNDLE_KEY_PNR_DATA_DATAKEY = "DATA";
     public static final String BUNDLE_KEY_PNR_DATA_PNRKEY = "PNR";
     private static DBBroker myself = null;
-    private Context context;
-    private TicketDatabase ticketDB;
+    private final TicketDatabase ticketDB;
 
     private DBBroker(Context context) {
-        this.context = context;
         ticketDB = new TicketDatabase(context);
-
     }
 
     public static DBBroker createDataFetcher(Context context) {

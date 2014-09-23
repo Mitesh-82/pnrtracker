@@ -22,7 +22,6 @@ public class TicketDatabase {
                     TicketDBRecord.COLUMN_NAME_TICKET_DATA + TEXT_TYPE + " )";
 
 
-    private Context context;
     private DBHelper dbHelper;
 
     private String[] projection = {
@@ -32,7 +31,6 @@ public class TicketDatabase {
     private String selection = TicketDBRecord.COLUMN_NAME_PNRNO + " LIKE ?";
 
     public TicketDatabase(Context context) {
-        this.context = context;
 
         dbHelper = new DBHelper(context);
     }

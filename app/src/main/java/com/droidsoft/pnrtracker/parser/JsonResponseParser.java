@@ -69,12 +69,11 @@ public class JsonResponseParser {
 
 
             jsonReader.endObject();
+            jsonReader.close();
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ParseException e) {
             e.printStackTrace();
-        } finally {
-
         }
 
         return ticket;
