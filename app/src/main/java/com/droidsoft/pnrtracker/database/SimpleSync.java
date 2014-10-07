@@ -23,7 +23,7 @@ public class SimpleSync extends SyncInterface {
     private SimpleSync(Context context) {
         super();
         this.context = context;
-        httpBasedTicketFetcher = new HttpBasedTicketFetcher(context);
+        httpBasedTicketFetcher = new HttpBasedTicketFetcher();
 
         syncDatabase = new SyncDatabase(context);
     }
