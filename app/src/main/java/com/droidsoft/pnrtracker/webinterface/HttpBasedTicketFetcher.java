@@ -1,5 +1,7 @@
 package com.droidsoft.pnrtracker.webinterface;
 
+import com.droidsoft.pnrtracker.utils.Logger;
+
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpGet;
@@ -16,6 +18,9 @@ public class HttpBasedTicketFetcher {
     private HttpClient httpClient;
 
     public String getTicketData(String pnr) throws IOException {
+
+        Logger.LogD("getTicketData getting called for PNR: -" + pnr);
+
         String serverResponse = "";
 
         httpClient = new DefaultHttpClient();

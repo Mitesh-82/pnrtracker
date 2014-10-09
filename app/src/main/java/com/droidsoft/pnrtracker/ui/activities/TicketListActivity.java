@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputFilter;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -14,15 +15,23 @@ import android.widget.ListView;
 
 import com.droidsoft.pnrtracker.R;
 import com.droidsoft.pnrtracker.database.DBBroker;
+import com.droidsoft.pnrtracker.database.SimpleSync;
+import com.droidsoft.pnrtracker.database.SyncInterface;
+import com.droidsoft.pnrtracker.database.SyncListener;
+import com.droidsoft.pnrtracker.datatypes.Ticket;
 import com.droidsoft.pnrtracker.ui.views.TicketListAdapter;
 
-public class TicketListActivity extends Activity implements View.OnClickListener {
+public class TicketListActivity extends Activity implements View.OnClickListener, SyncListener {
 
     private static final int PNR_LENGTH = 10;
-    ListView ticketListView;
-    EditText editTextPnrSearch;
-    ImageButton buttonSearchPnr;
+    private ListView ticketListView;
+    private EditText editTextPnrSearch;
+    private ImageButton buttonSearchPnr, buttonSyncAll;
     private Context context;
+    private boolean refreshView = false;
+    private SyncInterface syncInterface;
+    private boolean needRefresh = false;
+    private TicketListAdapter ticketListAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,14 +42,18 @@ public class TicketListActivity extends Activity implements View.OnClickListener
         ticketListView = (ListView) findViewById(R.id.listView_tickets);
         editTextPnrSearch = (EditText) findViewById(R.id.editTextPNR);
         buttonSearchPnr = (ImageButton) findViewById(R.id.buttonSearchPNR);
+        buttonSyncAll = (ImageButton) findViewById(R.id.imageButton_SyncAll);
 
         editTextPnrSearch.setFilters(new InputFilter[]{new InputFilter.LengthFilter(10)});
         buttonSearchPnr.setOnClickListener(this);
+        buttonSyncAll.setOnClickListener(this);
 
-
-        TicketListAdapter ticketListAdapter = new TicketListAdapter(this);
+        ticketListAdapter = new TicketListAdapter(this);
         ticketListView.setAdapter(ticketListAdapter);
         ticketListView.setOnItemClickListener(ticketListAdapter);
+
+        syncInterface = SimpleSync.createSimpleSync(context);
+        syncInterface.registerListener(this);
     }
 
 
@@ -76,6 +89,41 @@ public class TicketListActivity extends Activity implements View.OnClickListener
 
                 context.startActivity(intent);
             }
+        } else if (buttonSyncAll == v) {
+            for (String pnr : DBBroker.createDataFetcher(context).getAllSyncablePnrs()) {
+                syncInterface.doServerRequest(pnr);
+            }
         }
+    }
+
+    @Override
+    public void onSyncStart() {
+
+    }
+
+    @Override
+    public void onSyncEnd() {
+
+    }
+
+    @Override
+    public void onSyncComplete(Ticket ticket, String responseJson) {
+        Log.d("Syncer", "Calling Sync Complete for PNR: - " + ticket.getPnrNo());
+        if (Ticket.IsValidTicket(ticket))
+            needRefresh = true;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (needRefresh) {
+            needRefresh = false;
+            ticketListAdapter.notifyDataSetChanged();
+        }
+    }
+
+    @Override
+    public void onSyncError(Exception exception) {
+
     }
 }

@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.droidsoft.pnrtracker.datatypes.Ticket;
 import com.droidsoft.pnrtracker.parser.JsonResponseParser;
+import com.droidsoft.pnrtracker.ui.SyncService;
 import com.droidsoft.pnrtracker.webinterface.HttpBasedTicketFetcher;
 
 import java.io.IOException;
@@ -54,6 +55,24 @@ public class SimpleSync extends SyncInterface {
 
         WorkerThread thread = new WorkerThread(pnrNo, httpBasedTicketFetcher);
         thread.start();
+
+    }
+
+    @Override
+    public void addSyncRequest(String pnrNo, long interval) {
+        //todo: find a better place to start syncservice
+        SyncService.createSyncService(context);
+
+        //check if pnrNo is empty
+        if ((pnrNo == null) || pnrNo.isEmpty())
+            return;
+
+        if ((interval == 0) || (interval == SyncIntervals.NEVER)) {
+            //remove sync request from DB if exists
+            syncDatabase.delPnr(pnrNo);
+        }
+
+        syncDatabase.addPnr(pnrNo, interval);
     }
 
 
@@ -79,7 +98,6 @@ public class SimpleSync extends SyncInterface {
 
                 for (SyncListener syncListener : syncListeners)
                     syncListener.onSyncComplete(ticket, serverResponse);
-
 
             } catch (IOException e) {
                 for (SyncListener syncListener : syncListeners)

@@ -15,6 +15,7 @@ import com.droidsoft.pnrtracker.database.SimpleSync;
 import com.droidsoft.pnrtracker.database.SyncInterface;
 import com.droidsoft.pnrtracker.database.SyncListener;
 import com.droidsoft.pnrtracker.datatypes.Ticket;
+import com.droidsoft.pnrtracker.ui.views.SyncDialog;
 import com.droidsoft.pnrtracker.ui.views.TicketWidget;
 
 
@@ -39,11 +40,14 @@ public class TicketViewActivity extends Activity implements SyncListener {
         Ticket ticket = (Ticket) getIntent().getExtras().getSerializable(DBBroker.BUNDLE_KEY_PNR_DATA_DATAKEY);
         //if there is no Ticket from previous activity it means we need to request from server
         if (ticket == null) {
-            String pnr = getIntent().getExtras().getString(DBBroker.BUNDLE_KEY_PNR_DATA_PNRKEY);
+            pnr = getIntent().getExtras().getString(DBBroker.BUNDLE_KEY_PNR_DATA_PNRKEY);
 
             syncInterface.doServerRequest(pnr);
-        } else
+        } else {
+            pnr = ticket.getPnrNo();
             updateTicketView(ticket);
+        }
+
     }
 
     @Override
@@ -80,6 +84,10 @@ public class TicketViewActivity extends Activity implements SyncListener {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.action_settings) {
+            SyncDialog syncDialog = new SyncDialog();
+            syncDialog.setPnrNo(pnr);
+
+            syncDialog.show(this.getFragmentManager(), "Sync Intervals");
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -97,9 +105,11 @@ public class TicketViewActivity extends Activity implements SyncListener {
 
     @Override
     public void onSyncComplete(Ticket ticket, String responseJson) {
-        Message msg = handler.obtainMessage(ActivityHandler.MSG_UPDATE_VIEW, ticket);
+        if ((ticket != null) && (ticket.getIsValid()) && (ticket.getPnrNo().equals(pnr))) {
+            Message msg = handler.obtainMessage(ActivityHandler.MSG_UPDATE_VIEW, ticket);
 
-        handler.sendMessage(msg);
+            handler.sendMessage(msg);
+        }
     }
 
     @Override

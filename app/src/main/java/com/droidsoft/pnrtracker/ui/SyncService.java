@@ -8,6 +8,7 @@ import android.os.IBinder;
 
 import com.droidsoft.pnrtracker.database.SimpleSync;
 import com.droidsoft.pnrtracker.database.SyncInterface;
+import com.droidsoft.pnrtracker.utils.Logger;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -15,6 +16,7 @@ import java.util.TimerTask;
 public class SyncService extends Service {
     // constant
     public static final long NOTIFY_INTERVAL = SyncInterface.SyncIntervals.EVERY_15_MINUTES; // 15 minutes
+    private static boolean isCreated = false;
     SyncInterface syncInterface;
     // run on another Thread to avoid crash
     private Handler mHandler = new Handler();
@@ -22,16 +24,27 @@ public class SyncService extends Service {
     private Timer mTimer = null;
     private int syncCounter = 0;
 
+    public static void createSyncService(Context context) {
+
+        if (!isCreated) {
+            Intent intent = new Intent(context, SyncService.class);
+            context.startService(intent);
+        }
+
+    }
+
     @Override
     public IBinder onBind(Intent intent) {
         // TODO: Return the communication channel to the service.
         throw new UnsupportedOperationException("Not yet implemented");
     }
 
-
     @Override
     public void onCreate() {
         super.onCreate();
+        Logger.LogD("SyncService onCreate");
+
+        isCreated = true;
 
         // cancel if already existed
         if (mTimer != null) {
@@ -48,6 +61,7 @@ public class SyncService extends Service {
     }
 
     private void doSync() {
+        Logger.LogD("SyncService : doSync");
         Context context = getApplicationContext();
 
         syncCounter += NOTIFY_INTERVAL;

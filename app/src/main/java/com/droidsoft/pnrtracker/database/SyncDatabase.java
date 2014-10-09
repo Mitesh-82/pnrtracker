@@ -62,7 +62,7 @@ public class SyncDatabase {
         if (cursor.getCount() > 0) {
             cursor.moveToFirst();
 
-            while (cursor.isAfterLast()) {
+            while (!cursor.isAfterLast()) {
                 Pnrs.add(cursor.getString(0));
                 cursor.moveToNext();
             }
@@ -73,7 +73,7 @@ public class SyncDatabase {
         return Pnrs;
     }
 
-    public void addPnr(String pnr, int syncInterval) {
+    public void addPnr(String pnr, long syncInterval) {
 
         if ((pnr == null) || pnr.isEmpty() || (syncInterval == SyncInterface.SyncIntervals.NEVER)) {
             return;
@@ -95,7 +95,7 @@ public class SyncDatabase {
 
     }
 
-    private void updateSyncRecord(String pnr, int interval) {
+    private void updateSyncRecord(String pnr, long interval) {
         String selection = SyncDBRecord.COLUMN_NAME_PNRNO + " LIKE ?";
         String[] selectionArgs = {pnr};
 

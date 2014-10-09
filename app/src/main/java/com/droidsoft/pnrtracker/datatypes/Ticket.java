@@ -31,6 +31,12 @@ public class Ticket implements Serializable, Comparable<Ticket> {
         passengerData = new ArrayList<PassengerData>();
     }
 
+    public static Boolean IsValidTicket(Ticket ticket) {
+        if ((ticket != null) && (ticket.getIsValid()))
+            return true;
+        return false;
+    }
+
     public int getRacCount() {
         return racCount;
     }
@@ -161,6 +167,15 @@ public class Ticket implements Serializable, Comparable<Ticket> {
         return travelDate.compareTo(another.getTravelDate());
     }
 
+    public boolean equals(Ticket ticket) {
+        boolean isEqual = true;
+
+        if (!pnrNo.equals(ticket.getPnrNo())) {
+            return false;
+        }
+
+        return isEqual;
+    }
 
     public class PassengerData implements Serializable {
 
@@ -183,6 +198,10 @@ public class Ticket implements Serializable, Comparable<Ticket> {
 
         public String getBookingStatus() {
             return bookingStatus;
+        }
+
+        public boolean equals(PassengerData passengerData) {
+            return (seatNumber.equals(passengerData.getSeatNumber()) && bookingStatus.equals(passengerData.getBookingStatus()));
         }
     }
 }

@@ -28,7 +28,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
-        android:src="@android:drawable/ic_popup_sync" />
+        android:src="@drawable/sync_icon" />
 
     <ImageButton
         android:id="@+id/buttonSearchPNR"

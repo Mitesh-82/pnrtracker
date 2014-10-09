@@ -72,4 +72,17 @@ public class DBBroker implements SyncListener {
     public void onSyncError(Exception exception) {
 
     }
+
+    public ArrayList<String> getAllSyncablePnrs() {
+        ArrayList<Ticket> tickets = getAllTickets();
+
+        ArrayList<String> pnrs = new ArrayList<String>();
+
+        for (Ticket ticket : tickets) {
+            if (Ticket.IsValidTicket(ticket))
+                pnrs.add(ticket.getPnrNo());
+        }
+
+        return pnrs;
+    }
 }
