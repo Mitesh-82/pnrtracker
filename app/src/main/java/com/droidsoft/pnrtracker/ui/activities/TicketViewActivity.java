@@ -68,6 +68,7 @@ public class TicketViewActivity extends Activity implements SyncListener {
         }
     }
 
+    
     private void updateTicketView(Ticket ticket) {
 
         if ((ticket != null) && (ticket.getIsValid())) {
