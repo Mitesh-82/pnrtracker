@@ -38,6 +38,14 @@ public class TicketListAdapter extends BaseAdapter implements AdapterView.OnItem
     }
 
     @Override
+    public void notifyDataSetChanged() {
+        ticketList = dbBroker.getAllTickets();
+
+        Collections.sort(ticketList);
+        super.notifyDataSetChanged();
+    }
+
+    @Override
     public int getCount() {
         return ticketList.size();
     }

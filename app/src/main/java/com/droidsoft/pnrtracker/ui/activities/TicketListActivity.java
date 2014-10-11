@@ -30,7 +30,6 @@ public class TicketListActivity extends Activity implements View.OnClickListener
     private Context context;
     private boolean refreshView = false;
     private SyncInterface syncInterface;
-    private boolean needRefresh = false;
     private TicketListAdapter ticketListAdapter;
 
     @Override
@@ -112,17 +111,12 @@ public class TicketListActivity extends Activity implements View.OnClickListener
     @Override
     public void onSyncComplete(Ticket ticket, String responseJson) {
         Log.d("Syncer", "Calling Sync Complete for PNR: - " + ticket.getPnrNo());
-        if (Ticket.IsValidTicket(ticket))
-            needRefresh = true;
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        if (needRefresh) {
-            needRefresh = false;
-            ticketListAdapter.notifyDataSetChanged();
-        }
+        ticketListAdapter.notifyDataSetChanged();
     }
 
     @Override
