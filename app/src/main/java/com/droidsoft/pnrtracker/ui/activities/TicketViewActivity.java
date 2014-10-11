@@ -7,6 +7,10 @@ import android.os.Handler;
 import android.os.Message;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import com.droidsoft.pnrtracker.R;
@@ -25,6 +29,7 @@ public class TicketViewActivity extends Activity implements SyncListener {
     ActivityHandler handler = new ActivityHandler();
     private String pnr;
     private SyncInterface syncInterface;
+    private ImageView imageAnimation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +38,11 @@ public class TicketViewActivity extends Activity implements SyncListener {
 
         context = this;
         layout = (RelativeLayout) findViewById(R.id.baselayout);
+
+        imageAnimation = (ImageView)findViewById(R.id.imageView);
+        Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.draw_working);
+        imageAnimation.startAnimation(animation);
+
 
         syncInterface = SimpleSync.createSimpleSync(context);
         syncInterface.registerListener(this);
@@ -43,7 +53,7 @@ public class TicketViewActivity extends Activity implements SyncListener {
             pnr = getIntent().getExtras().getString(DBBroker.BUNDLE_KEY_PNR_DATA_PNRKEY);
 
             syncInterface.doServerRequest(pnr);
-        } else {
+         } else {
             pnr = ticket.getPnrNo();
             updateTicketView(ticket);
         }
@@ -62,6 +72,10 @@ public class TicketViewActivity extends Activity implements SyncListener {
 
         if ((ticket != null) && (ticket.getIsValid())) {
             layout.removeAllViews();
+
+            imageAnimation.clearAnimation();
+            imageAnimation.setImageDrawable(null);
+
             TicketWidget ticketWidget = new TicketWidget(context, ticket);
 
             layout.addView(ticketWidget);
