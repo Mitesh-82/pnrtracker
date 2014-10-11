@@ -70,7 +70,7 @@ public class TicketListActivity extends Activity implements View.OnClickListener
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_sync_all) {
             return true;
         }
         return super.onOptionsItemSelected(item);

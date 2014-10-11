@@ -90,6 +90,7 @@ public class SyncDatabase {
             SQLiteDatabase db = dbhelper.getWritableDatabase();
 
             db.insert(SyncDBRecord.TABLE_NAME, null, values);
+            db.close();
 
         }
 
@@ -105,6 +106,7 @@ public class SyncDatabase {
 
         SQLiteDatabase db = dbhelper.getWritableDatabase();
         db.update(SyncDBRecord.TABLE_NAME, values, selection, selectionArgs);
+        db.close();
 
     }
 
@@ -114,6 +116,7 @@ public class SyncDatabase {
             String[] selectionArgs = {pnr};
             SQLiteDatabase db = dbhelper.getWritableDatabase();
             db.delete(SyncDBRecord.TABLE_NAME, selection, selectionArgs);
+            db.close();
         }
     }
 

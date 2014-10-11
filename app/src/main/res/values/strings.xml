@@ -6,5 +6,7 @@
     <string name="action_sync_settings">Sync Interval</string>
     <string name="title_activity_ticket_list">Ticket List</string>
     <string name="pnr_edittext_hint">Enter Pnr to Search</string>
+    <string name="action_delete">Delete</string>
+    <string name="action_sync_all">Sync All</string>
 
 </resources>

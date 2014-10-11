@@ -24,9 +24,8 @@ public class DBBroker implements SyncListener {
     public static DBBroker createDataFetcher(Context context) {
         if (myself == null) {
             myself = new DBBroker(context);
+            SimpleSync.createSimpleSync(context).registerListener(myself);
         }
-
-        SimpleSync.createSimpleSync(context).registerListener(myself);
 
         return myself;
 
@@ -45,6 +44,13 @@ public class DBBroker implements SyncListener {
         }
 
         return tickets;
+    }
+
+    public void delTicket(String pnr) {
+        if ((pnr == null) || (pnr.isEmpty()))
+            return;
+
+        ticketDB.delTicketRecord(pnr);
     }
 
 

@@ -64,6 +64,7 @@ public class TicketDatabase {
             SQLiteDatabase db = dbHelper.getWritableDatabase();
 
             db.insert(TicketDBRecord.TABLE_NAME, null, values);
+            db.close();
 
         }
     }
@@ -77,6 +78,7 @@ public class TicketDatabase {
 
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         db.update(TicketDBRecord.TABLE_NAME, values, selection, selectionArgs);
+        db.close();
 
     }
 
@@ -85,6 +87,7 @@ public class TicketDatabase {
             String[] selectionArgs = {pnr};
             SQLiteDatabase db = dbHelper.getWritableDatabase();
             db.delete(TicketDBRecord.TABLE_NAME, selection, selectionArgs);
+            db.close();
         }
     }
 

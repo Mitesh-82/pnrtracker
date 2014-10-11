@@ -32,6 +32,8 @@ public abstract class SyncInterface {
 
     public abstract void addSyncRequest(String pnrNo, long interval);
 
+    public abstract void delSyncRequest(String pnrNo);
+
 
     public static class SyncIntervals {
         public static final long EVERY_15_MINUTES = 15 * 60 * 1000;

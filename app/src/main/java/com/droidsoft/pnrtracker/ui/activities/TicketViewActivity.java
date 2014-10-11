@@ -89,6 +89,13 @@ public class TicketViewActivity extends Activity implements SyncListener {
 
             syncDialog.show(this.getFragmentManager(), "Sync Intervals");
             return true;
+        } else if (id == R.id.action_delete) {
+
+            DBBroker.createDataFetcher(this).delTicket(pnr);
+            SimpleSync.createSimpleSync(this).delSyncRequest(pnr);
+            this.finish();
+            return true;
+
         }
         return super.onOptionsItemSelected(item);
     }

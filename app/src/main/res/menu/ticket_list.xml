@@ -2,8 +2,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.droidsoft.pnrtracker.ui.activities.TicketListActivity">
     <item
-        android:id="@+id/action_settings"
+        android:id="@+id/action_sync_all"
         android:orderInCategory="100"
         android:showAsAction="never"
-        android:title="@string/action_sync_settings" />
+        android:title="@string/action_sync_all" />
 </menu>

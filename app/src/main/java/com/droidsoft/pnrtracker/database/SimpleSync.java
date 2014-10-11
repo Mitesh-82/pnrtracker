@@ -75,6 +75,14 @@ public class SimpleSync extends SyncInterface {
         syncDatabase.addPnr(pnrNo, interval);
     }
 
+    @Override
+    public void delSyncRequest(String pnrNo) {
+        if ((pnrNo == null) || pnrNo.isEmpty())
+            return;
+
+        syncDatabase.delPnr(pnrNo);
+    }
+
 
     class WorkerThread extends Thread {
         String Pnr;
