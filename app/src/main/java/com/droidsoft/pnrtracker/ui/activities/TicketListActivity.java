@@ -71,6 +71,9 @@ public class TicketListActivity extends Activity implements View.OnClickListener
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.action_sync_all) {
+            for (String pnr : DBBroker.createDataFetcher(context).getAllSyncablePnrs()) {
+                syncInterface.doServerRequest(pnr);
+            }
             return true;
         }
         return super.onOptionsItemSelected(item);
