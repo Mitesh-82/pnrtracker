@@ -14,8 +14,7 @@ import java.util.ArrayList;
  * SQL DB implementation of Ticket DB which takes care of Adding Ticket based on TicketListener
  */
 public class TicketDbImpl implements TicketDatabaseInterface, SyncListener {
-    public static final String BUNDLE_KEY_PNR_DATA_DATAKEY = "DATA";
-    public static final String BUNDLE_KEY_PNR_DATA_PNRKEY = "PNR";
+
     private static TicketDbImpl myself = null;
     private final TicketDatabase ticketDB;
 
