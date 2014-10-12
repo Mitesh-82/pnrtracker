@@ -1,10 +1,11 @@
-package com.droidsoft.pnrtracker.database;
+package com.droidsoft.pnrtracker.syncinterface;
 
 import android.content.Context;
 
+import com.droidsoft.pnrtracker.database.TicketDatabaseInterface;
+import com.droidsoft.pnrtracker.database.TicketDbImpl;
 import com.droidsoft.pnrtracker.datatypes.Ticket;
 import com.droidsoft.pnrtracker.parser.JsonResponseParser;
-import com.droidsoft.pnrtracker.ui.SyncService;
 import com.droidsoft.pnrtracker.webinterface.HttpBasedTicketFetcher;
 
 import java.io.IOException;
@@ -12,33 +13,34 @@ import java.util.ArrayList;
 
 /**
  * Created by mitesh.patel on 18-09-2014.
+ * Sync Impl responsible for doing sync and updating DB with DATA
  */
-public class SimpleSync extends SyncInterface {
-    private static SimpleSync myself = null;
+public class SyncImpl extends SyncInterface {
+    private static SyncImpl myself = null;
     Context context;
     private HttpBasedTicketFetcher httpBasedTicketFetcher;
-    private SyncDatabase syncDatabase;
+    private TicketDatabaseInterface ticketDatabaseInterface;
     private int requestCounter = 0;
 
 
-    private SimpleSync(Context context) {
+    private SyncImpl(Context context) {
         super();
         this.context = context;
         httpBasedTicketFetcher = new HttpBasedTicketFetcher();
 
-        syncDatabase = new SyncDatabase(context);
+        ticketDatabaseInterface = TicketDbImpl.createTicketDBImpl(context);
     }
 
-    public static SimpleSync createSimpleSync(Context context) {
+    public static SyncImpl createSimpleSync(Context context) {
         if (myself == null) {
-            myself = new SimpleSync(context);
+            myself = new SyncImpl(context);
         }
         return myself;
     }
 
     @Override
     public void doTimedSync(int interval) {
-        ArrayList<String> syncPnrs = syncDatabase.getPrnsforSync(interval);
+        ArrayList<String> syncPnrs = ticketDatabaseInterface.getPNRsForSync(interval);
 
         for (String pnr : syncPnrs) {
             doServerRequest(pnr);
@@ -56,31 +58,6 @@ public class SimpleSync extends SyncInterface {
         WorkerThread thread = new WorkerThread(pnrNo, httpBasedTicketFetcher);
         thread.start();
 
-    }
-
-    @Override
-    public void addSyncRequest(String pnrNo, long interval) {
-        //todo: find a better place to start syncservice
-        SyncService.createSyncService(context);
-
-        //check if pnrNo is empty
-        if ((pnrNo == null) || pnrNo.isEmpty())
-            return;
-
-        if ((interval == 0) || (interval == SyncIntervals.NEVER)) {
-            //remove sync request from DB if exists
-            syncDatabase.delPnr(pnrNo);
-        }
-
-        syncDatabase.addPnr(pnrNo, interval);
-    }
-
-    @Override
-    public void delSyncRequest(String pnrNo) {
-        if ((pnrNo == null) || pnrNo.isEmpty())
-            return;
-
-        syncDatabase.delPnr(pnrNo);
     }
 
 
@@ -105,7 +82,7 @@ public class SimpleSync extends SyncInterface {
                 ticket = JsonResponseParser.readTicketResponse(serverResponse);
 
                 for (SyncListener syncListener : syncListeners)
-                    syncListener.onSyncComplete(ticket, serverResponse);
+                    syncListener.onCurrentSyncComplete(ticket, serverResponse);
 
             } catch (IOException e) {
                 for (SyncListener syncListener : syncListeners)
@@ -114,7 +91,7 @@ public class SimpleSync extends SyncInterface {
                 requestCounter--;
                 if (requestCounter == 0) {
                     for (SyncListener syncListener : syncListeners)
-                        syncListener.onSyncEnd();
+                        syncListener.onAllSyncComplete();
                 }
             }
         }
