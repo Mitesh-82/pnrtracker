@@ -36,6 +36,6 @@ public class SyncDialog extends DialogFragment implements DialogInterface.OnClic
     public void onClick(DialogInterface dialogInterface, int i) {
         Logger.LogD("Interval + " + i);
         TicketDatabaseInterface ticketDatabaseInterface = TicketDbImpl.createTicketDBImpl(getActivity().getApplicationContext());
-        ticketDatabaseInterface.changePNRSync(pnrNo, SyncInterface.SyncIntervals.getIntervalfromIndex(i));
+        ticketDatabaseInterface.changePNRSync(pnrNo, SyncInterface.SyncIntervals.getIntervalFromIndex(i));
     }
 }
