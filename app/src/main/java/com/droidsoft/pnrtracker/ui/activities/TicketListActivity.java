@@ -89,7 +89,7 @@ public class TicketListActivity extends Activity implements View.OnClickListener
                 Intent intent = new Intent(context, TicketViewActivity.class);
 
                 Bundle bundle = new Bundle();
-                bundle.putString(TicketDbImpl.BUNDLE_KEY_PNR_DATA_PNRKEY, editTextPnrSearch.getText().toString());
+                bundle.putString(TicketViewActivity.BUNDLE_KEY_PNR_DATA_PNRKEY, editTextPnrSearch.getText().toString());
 
                 intent.putExtras(bundle);
 
