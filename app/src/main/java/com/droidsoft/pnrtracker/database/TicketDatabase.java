@@ -6,20 +6,24 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.provider.BaseColumns;
 
+import com.droidsoft.pnrtracker.syncinterface.SyncInterface;
+
 import java.util.ArrayList;
 
 /**
  * Created by mitesh.patel on 15-09-2014.
+ * SQL TicketDatabase implementation
  */
 public class TicketDatabase {
-    static final String SQL_DELETE_TICKETDB_ENTRIES =
-            "DROP TABLE IF EXISTS " + TicketDBRecord.TABLE_NAME;
     private static final String TEXT_TYPE = " TEXT";
+    private static final String INT_TYPE = " INTEGER";
     private static final String COMMA_SEP = ",";
+
     static final String SQL_CREATE_TICKETDB_ENTRIES =
             "CREATE TABLE " + TicketDBRecord.TABLE_NAME + " (" +
                     TicketDBRecord.COLUMN_NAME_PNRNO + TEXT_TYPE + COMMA_SEP +
-                    TicketDBRecord.COLUMN_NAME_TICKET_DATA + TEXT_TYPE + " )";
+                    TicketDBRecord.COLUMN_NAME_TICKET_DATA + TEXT_TYPE +
+                    TicketDBRecord.COLUMN_NAME_TICKET_DATA + INT_TYPE + " )";
 
 
     private DBHelper dbHelper;
@@ -30,10 +34,11 @@ public class TicketDatabase {
 
     private String selection = TicketDBRecord.COLUMN_NAME_PNRNO + " LIKE ?";
 
-    public TicketDatabase(Context context) {
+    protected TicketDatabase(Context context) {
 
         dbHelper = new DBHelper(context);
     }
+
 
     public boolean isTicketRecordPresent(String pnr) {
         boolean isTicketPresent = false;
@@ -53,13 +58,18 @@ public class TicketDatabase {
     }
 
     public void addTicketRecord(String pnr, String pnrData) {
+        addTicketRecord(pnr, pnrData, SyncInterface.SyncIntervals.NEVER);
+    }
+
+    public void addTicketRecord(String pnr, String pnrData, long interval) {
         if (isTicketRecordPresent(pnr)) {
-            updateTicketRecord(pnr, pnrData);
+            updatePnrData(pnr, pnrData);
         } else {
 
             ContentValues values = new ContentValues();
             values.put(TicketDBRecord.COLUMN_NAME_PNRNO, pnr);
             values.put(TicketDBRecord.COLUMN_NAME_TICKET_DATA, pnrData);
+            values.put(TicketDBRecord.COLUMN_NAME_SYNC_DATA, interval);
 
             SQLiteDatabase db = dbHelper.getWritableDatabase();
 
@@ -69,7 +79,7 @@ public class TicketDatabase {
         }
     }
 
-    private void updateTicketRecord(String pnr, String pnrData) {
+    private void updatePnrData(String pnr, String pnrData) {
 
         String[] selectionArgs = {pnr};
 
@@ -91,7 +101,7 @@ public class TicketDatabase {
         }
     }
 
-    public ArrayList<String> getAllTicketRecords() {
+    public ArrayList<String> getAllPnrs() {
         ArrayList<String> ticketData = new ArrayList<String>();
 
         String[] projection = {
@@ -113,24 +123,52 @@ public class TicketDatabase {
         return ticketData;
     }
 
-    public String getTicketData(String pnr) {
-        if (isTicketRecordPresent(pnr)) {
-            SQLiteDatabase db = dbHelper.getReadableDatabase();
+    public ArrayList<String> getPNRsForSync(int syncInterval) {
+        String[] projection = {TicketDBRecord.COLUMN_NAME_PNRNO};
+        String selection = TicketDBRecord.COLUMN_NAME_SYNC_DATA + " <= ?";
+        String[] selectionArgs = {Integer.toString(syncInterval)};
 
-            String[] selectionArgs = {pnr};
-            Cursor cursor = db.query(TicketDBRecord.TABLE_NAME, projection, selection, selectionArgs, null, null, null);
+        ArrayList<String> Pnrs = new ArrayList<String>();
 
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+
+        Cursor cursor = db.query(TicketDBRecord.TABLE_NAME, projection, selection, selectionArgs, null, null, null);
+
+        if (cursor.getCount() > 0) {
             cursor.moveToFirst();
-            return cursor.getString(1);
-        } else return null;
+
+            while (!cursor.isAfterLast()) {
+                Pnrs.add(cursor.getString(0));
+                cursor.moveToNext();
+            }
+        }
+
+        cursor.close();
+
+        return Pnrs;
     }
+
+
+    public void updateSyncRecord(String pnr, long interval) {
+        String selection = TicketDBRecord.COLUMN_NAME_PNRNO + " LIKE ?";
+        String[] selectionArgs = {pnr};
+
+        ContentValues values = new ContentValues();
+        values.put(TicketDBRecord.COLUMN_NAME_SYNC_DATA, interval);
+
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        db.update(TicketDBRecord.TABLE_NAME, values, selection, selectionArgs);
+        db.close();
+
+    }
+
 
     public abstract class TicketDBRecord implements BaseColumns {
         public static final String TABLE_NAME = "TicketDB";
         public static final String COLUMN_NAME_PNRNO = "PNR_no";
         public static final String COLUMN_NAME_TICKET_DATA = "Ticket_Data";
+        public static final String COLUMN_NAME_SYNC_DATA = "Sync_Interval";
 
     }
-
 
 }
