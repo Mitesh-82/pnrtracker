@@ -22,8 +22,8 @@ public class TicketDatabase {
     static final String SQL_CREATE_TICKETDB_ENTRIES =
             "CREATE TABLE " + TicketDBRecord.TABLE_NAME + " (" +
                     TicketDBRecord.COLUMN_NAME_PNRNO + TEXT_TYPE + COMMA_SEP +
-                    TicketDBRecord.COLUMN_NAME_TICKET_DATA + TEXT_TYPE +
-                    TicketDBRecord.COLUMN_NAME_TICKET_DATA + INT_TYPE + " )";
+                    TicketDBRecord.COLUMN_NAME_TICKET_DATA + INT_TYPE + COMMA_SEP +
+                    TicketDBRecord.COLUMN_NAME_SYNC_DATA + INT_TYPE + " )";
 
 
     private DBHelper dbHelper;
@@ -124,7 +124,7 @@ public class TicketDatabase {
     }
 
     public ArrayList<String> getPNRsForSync(int syncInterval) {
-        String[] projection = {TicketDBRecord.COLUMN_NAME_PNRNO};
+        String[] projection = {TicketDBRecord.COLUMN_NAME_PNRNO, TicketDBRecord.COLUMN_NAME_SYNC_DATA};
         String selection = TicketDBRecord.COLUMN_NAME_SYNC_DATA + " <= ?";
         String[] selectionArgs = {Integer.toString(syncInterval)};
 
@@ -138,7 +138,8 @@ public class TicketDatabase {
             cursor.moveToFirst();
 
             while (!cursor.isAfterLast()) {
-                Pnrs.add(cursor.getString(0));
+                if (cursor.getLong(1) != 0)
+                    Pnrs.add(cursor.getString(0));
                 cursor.moveToNext();
             }
         }
