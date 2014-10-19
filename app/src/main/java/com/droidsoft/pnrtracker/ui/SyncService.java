@@ -6,8 +6,8 @@ import android.content.Intent;
 import android.os.Handler;
 import android.os.IBinder;
 
-import com.droidsoft.pnrtracker.database.SimpleSync;
-import com.droidsoft.pnrtracker.database.SyncInterface;
+import com.droidsoft.pnrtracker.syncinterface.SyncImpl;
+import com.droidsoft.pnrtracker.syncinterface.SyncInterface;
 import com.droidsoft.pnrtracker.utils.Logger;
 
 import java.util.Timer;
@@ -54,7 +54,7 @@ public class SyncService extends Service {
             mTimer = new Timer();
         }
 
-        syncInterface = SimpleSync.createSimpleSync(getApplicationContext());
+        syncInterface = SyncImpl.createSimpleSync(getApplicationContext());
 
         // schedule task
         mTimer.scheduleAtFixedRate(new TimeDisplayTimerTask(), 0, NOTIFY_INTERVAL);
@@ -62,13 +62,12 @@ public class SyncService extends Service {
 
     private void doSync() {
         Logger.LogD("SyncService : doSync");
-        Context context = getApplicationContext();
 
         syncCounter += NOTIFY_INTERVAL;
 
         syncInterface.doTimedSync(syncCounter);
 
-        if (syncCounter >= SimpleSync.SyncIntervals.MAX_INTERVAL)
+        if (syncCounter >= SyncImpl.SyncIntervals.MAX_INTERVAL)
             syncCounter = 0;
     }
 

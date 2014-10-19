@@ -4,38 +4,49 @@ import android.content.Context;
 
 import com.droidsoft.pnrtracker.datatypes.Ticket;
 import com.droidsoft.pnrtracker.parser.JsonResponseParser;
+import com.droidsoft.pnrtracker.syncinterface.SyncImpl;
+import com.droidsoft.pnrtracker.syncinterface.SyncListener;
 
 import java.util.ArrayList;
 
 /**
  * Created by mitesh.patel on 15-09-2014.
+ * SQL DB implementation of Ticket DB which takes care of Adding Ticket based on TicketListener
  */
-public class DBBroker implements SyncListener {
-    public static final String ACTION_PNR_DATA_AVAILABLE = "com.droidsoft.pnrtracker.ACTION_PNR_DATA_AVAILABLE";
-    public static final String BUNDLE_KEY_PNR_DATA_DATAKEY = "DATA";
-    public static final String BUNDLE_KEY_PNR_DATA_PNRKEY = "PNR";
-    private static DBBroker myself = null;
+public class TicketDbImpl implements TicketDatabaseInterface, SyncListener {
+
+    private static TicketDbImpl myself = null;
     private final TicketDatabase ticketDB;
 
-    private DBBroker(Context context) {
+    private TicketDbImpl(Context context) {
+        super();
         ticketDB = new TicketDatabase(context);
     }
 
-    public static DBBroker createDataFetcher(Context context) {
+    public static TicketDbImpl createTicketDBImpl(Context context) {
+
         if (myself == null) {
-            myself = new DBBroker(context);
-            SimpleSync.createSimpleSync(context).registerListener(myself);
+            myself = new TicketDbImpl(context);
+            SyncImpl.createSimpleSync(context).registerListener(myself);
         }
 
         return myself;
-
     }
 
+    @Override
+    public ArrayList<String> getPNRsForSync(int syncInterval) {
+        return ticketDB.getPNRsForSync(syncInterval);
+    }
+
+    @Override
+    public void changePNRSync(String pnr, long syncInterval) {
+        ticketDB.updateSyncRecord(pnr, syncInterval);
+    }
 
     public ArrayList<Ticket> getAllTickets() {
         ArrayList<Ticket> tickets = new ArrayList<Ticket>();
 
-        ArrayList<String> ticketData = ticketDB.getAllTicketRecords();
+        ArrayList<String> ticketData = ticketDB.getAllPnrs();
 
         if (!ticketData.isEmpty()) {
             for (String ticketStr : ticketData) {
@@ -46,6 +57,7 @@ public class DBBroker implements SyncListener {
         return tickets;
     }
 
+    @Override
     public void delTicket(String pnr) {
         if ((pnr == null) || (pnr.isEmpty()))
             return;
@@ -60,12 +72,12 @@ public class DBBroker implements SyncListener {
     }
 
     @Override
-    public void onSyncEnd() {
+    public void onAllSyncComplete() {
 
     }
 
     @Override
-    public void onSyncComplete(Ticket ticket, String responseJson) {
+    public void onCurrentSyncComplete(Ticket ticket, String responseJson) {
         if ((ticket != null) && (responseJson != null) &&
                 (ticket.getIsValid()) && (!responseJson.isEmpty())) {
             synchronized (ticketDB) {
@@ -79,7 +91,8 @@ public class DBBroker implements SyncListener {
 
     }
 
-    public ArrayList<String> getAllSyncablePnrs() {
+    @Override
+    public ArrayList<String> getAllSyncablePNRs() {
         ArrayList<Ticket> tickets = getAllTickets();
 
         ArrayList<String> pnrs = new ArrayList<String>();

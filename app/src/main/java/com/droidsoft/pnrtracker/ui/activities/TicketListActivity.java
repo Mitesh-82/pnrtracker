@@ -14,11 +14,13 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 
 import com.droidsoft.pnrtracker.R;
-import com.droidsoft.pnrtracker.database.DBBroker;
-import com.droidsoft.pnrtracker.database.SimpleSync;
-import com.droidsoft.pnrtracker.database.SyncInterface;
-import com.droidsoft.pnrtracker.database.SyncListener;
+import com.droidsoft.pnrtracker.database.TicketDatabaseInterface;
+import com.droidsoft.pnrtracker.database.TicketDbImpl;
 import com.droidsoft.pnrtracker.datatypes.Ticket;
+import com.droidsoft.pnrtracker.syncinterface.SyncImpl;
+import com.droidsoft.pnrtracker.syncinterface.SyncInterface;
+import com.droidsoft.pnrtracker.syncinterface.SyncListener;
+import com.droidsoft.pnrtracker.ui.SyncService;
 import com.droidsoft.pnrtracker.ui.views.TicketListAdapter;
 
 public class TicketListActivity extends Activity implements View.OnClickListener, SyncListener {
@@ -28,7 +30,6 @@ public class TicketListActivity extends Activity implements View.OnClickListener
     private EditText editTextPnrSearch;
     private ImageButton buttonSearchPnr, buttonSyncAll;
     private Context context;
-    private boolean refreshView = false;
     private SyncInterface syncInterface;
     private TicketListAdapter ticketListAdapter;
 
@@ -37,6 +38,8 @@ public class TicketListActivity extends Activity implements View.OnClickListener
         super.onCreate(savedInstanceState);
         context = this;
         setContentView(R.layout.activity_ticket_list);
+
+        SyncService.createSyncService(context);
 
         ticketListView = (ListView) findViewById(R.id.listView_tickets);
         editTextPnrSearch = (EditText) findViewById(R.id.editTextPNR);
@@ -51,7 +54,7 @@ public class TicketListActivity extends Activity implements View.OnClickListener
         ticketListView.setAdapter(ticketListAdapter);
         ticketListView.setOnItemClickListener(ticketListAdapter);
 
-        syncInterface = SimpleSync.createSimpleSync(context);
+        syncInterface = SyncImpl.createSimpleSync(context);
         syncInterface.registerListener(this);
     }
 
@@ -70,7 +73,8 @@ public class TicketListActivity extends Activity implements View.OnClickListener
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.action_sync_all) {
-            for (String pnr : DBBroker.createDataFetcher(context).getAllSyncablePnrs()) {
+            TicketDatabaseInterface tdbInterface = TicketDbImpl.createTicketDBImpl(context);
+            for (String pnr : tdbInterface.getAllSyncablePNRs()) {
                 syncInterface.doServerRequest(pnr);
             }
             return true;
@@ -85,14 +89,15 @@ public class TicketListActivity extends Activity implements View.OnClickListener
                 Intent intent = new Intent(context, TicketViewActivity.class);
 
                 Bundle bundle = new Bundle();
-                bundle.putString(DBBroker.BUNDLE_KEY_PNR_DATA_PNRKEY, editTextPnrSearch.getText().toString());
+                bundle.putString(TicketViewActivity.BUNDLE_KEY_PNR_DATA_PNRKEY, editTextPnrSearch.getText().toString());
 
                 intent.putExtras(bundle);
 
                 context.startActivity(intent);
             }
         } else if (buttonSyncAll == v) {
-            for (String pnr : DBBroker.createDataFetcher(context).getAllSyncablePnrs()) {
+            TicketDatabaseInterface tdbInterface = TicketDbImpl.createTicketDBImpl(context);
+            for (String pnr : tdbInterface.getAllSyncablePNRs()) {
                 syncInterface.doServerRequest(pnr);
             }
         }
@@ -104,12 +109,12 @@ public class TicketListActivity extends Activity implements View.OnClickListener
     }
 
     @Override
-    public void onSyncEnd() {
+    public void onAllSyncComplete() {
 
     }
 
     @Override
-    public void onSyncComplete(Ticket ticket, String responseJson) {
+    public void onCurrentSyncComplete(Ticket ticket, String responseJson) {
         Log.d("Syncer", "Calling Sync Complete for PNR: - " + ticket.getPnrNo());
     }
 

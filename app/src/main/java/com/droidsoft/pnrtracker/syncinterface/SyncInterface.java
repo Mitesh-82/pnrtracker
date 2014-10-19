@@ -1,16 +1,14 @@
-package com.droidsoft.pnrtracker.database;
+package com.droidsoft.pnrtracker.syncinterface;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Created by mitesh.patel on 18-09-2014.
+ * Interface for doing Sync
  */
 public abstract class SyncInterface {
     protected List<SyncListener> syncListeners;
-    private boolean isSyncInProgress = false;
-    private Set<String> pendingPnr;
 
     protected SyncInterface() {
         syncListeners = new ArrayList<SyncListener>();
@@ -30,10 +28,6 @@ public abstract class SyncInterface {
 
     public abstract void doServerRequest(String pnrNo);
 
-    public abstract void addSyncRequest(String pnrNo, long interval);
-
-    public abstract void delSyncRequest(String pnrNo);
-
 
     public static class SyncIntervals {
         public static final long EVERY_15_MINUTES = 15 * 60 * 1000;
@@ -43,13 +37,13 @@ public abstract class SyncInterface {
         public static final long EVERY_DAY = 60 * 24 * 60 * 1000;
 
         public static final long MAX_INTERVAL = EVERY_DAY;
-        public static final long NEVER = Long.MAX_VALUE;
+        public static final long NEVER = 0;
 
         public static final String[] SYNCINTERVAL_ARRAY = {"Never", "15 Minutes", "30 Minutes",
                 "1 Hour", "3 Hour", "Once a Day"};
 
-        public static final long getIntervalfromIndex(int index) {
-            long interval = NEVER;
+        public static long getIntervalFromIndex(int index) {
+            long interval;
             switch (index) {
                 default:
                 case 0:

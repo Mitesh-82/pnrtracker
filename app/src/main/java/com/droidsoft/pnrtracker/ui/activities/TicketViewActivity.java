@@ -7,23 +7,27 @@ import android.os.Handler;
 import android.os.Message;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import com.droidsoft.pnrtracker.R;
-import com.droidsoft.pnrtracker.database.DBBroker;
-import com.droidsoft.pnrtracker.database.SimpleSync;
-import com.droidsoft.pnrtracker.database.SyncInterface;
-import com.droidsoft.pnrtracker.database.SyncListener;
+import com.droidsoft.pnrtracker.database.TicketDatabaseInterface;
+import com.droidsoft.pnrtracker.database.TicketDbImpl;
 import com.droidsoft.pnrtracker.datatypes.Ticket;
+import com.droidsoft.pnrtracker.syncinterface.SyncImpl;
+import com.droidsoft.pnrtracker.syncinterface.SyncInterface;
+import com.droidsoft.pnrtracker.syncinterface.SyncListener;
 import com.droidsoft.pnrtracker.ui.views.SyncDialog;
 import com.droidsoft.pnrtracker.ui.views.TicketWidget;
 
 
 public class TicketViewActivity extends Activity implements SyncListener {
+
+    public static final String BUNDLE_KEY_PNR_DATA_DATAKEY = "DATA";
+    public static final String BUNDLE_KEY_PNR_DATA_PNRKEY = "PNR";
+
     Context context;
     RelativeLayout layout;
     ActivityHandler handler = new ActivityHandler();
@@ -39,21 +43,21 @@ public class TicketViewActivity extends Activity implements SyncListener {
         context = this;
         layout = (RelativeLayout) findViewById(R.id.baselayout);
 
-        imageAnimation = (ImageView)findViewById(R.id.imageView);
+        imageAnimation = (ImageView) findViewById(R.id.imageView);
         Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.draw_working);
         imageAnimation.startAnimation(animation);
 
 
-        syncInterface = SimpleSync.createSimpleSync(context);
+        syncInterface = SyncImpl.createSimpleSync(context);
         syncInterface.registerListener(this);
 
-        Ticket ticket = (Ticket) getIntent().getExtras().getSerializable(DBBroker.BUNDLE_KEY_PNR_DATA_DATAKEY);
+        Ticket ticket = (Ticket) getIntent().getExtras().getSerializable(BUNDLE_KEY_PNR_DATA_DATAKEY);
         //if there is no Ticket from previous activity it means we need to request from server
         if (ticket == null) {
-            pnr = getIntent().getExtras().getString(DBBroker.BUNDLE_KEY_PNR_DATA_PNRKEY);
+            pnr = getIntent().getExtras().getString(BUNDLE_KEY_PNR_DATA_PNRKEY);
 
             syncInterface.doServerRequest(pnr);
-         } else {
+        } else {
             pnr = ticket.getPnrNo();
             updateTicketView(ticket);
         }
@@ -106,8 +110,8 @@ public class TicketViewActivity extends Activity implements SyncListener {
             return true;
         } else if (id == R.id.action_delete) {
 
-            DBBroker.createDataFetcher(this).delTicket(pnr);
-            SimpleSync.createSimpleSync(this).delSyncRequest(pnr);
+            TicketDatabaseInterface tdbInterface = TicketDbImpl.createTicketDBImpl(this);
+            tdbInterface.delTicket(pnr);
             this.finish();
             return true;
 
@@ -121,12 +125,12 @@ public class TicketViewActivity extends Activity implements SyncListener {
     }
 
     @Override
-    public void onSyncEnd() {
+    public void onAllSyncComplete() {
 
     }
 
     @Override
-    public void onSyncComplete(Ticket ticket, String responseJson) {
+    public void onCurrentSyncComplete(Ticket ticket, String responseJson) {
         if ((ticket != null) && (ticket.getIsValid()) && (ticket.getPnrNo().equals(pnr))) {
             Message msg = handler.obtainMessage(ActivityHandler.MSG_UPDATE_VIEW, ticket);
 

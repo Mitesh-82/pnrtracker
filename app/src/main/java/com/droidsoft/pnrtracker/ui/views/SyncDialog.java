@@ -6,12 +6,14 @@ import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
 
-import com.droidsoft.pnrtracker.database.SimpleSync;
-import com.droidsoft.pnrtracker.database.SyncInterface;
+import com.droidsoft.pnrtracker.database.TicketDatabaseInterface;
+import com.droidsoft.pnrtracker.database.TicketDbImpl;
+import com.droidsoft.pnrtracker.syncinterface.SyncInterface;
 import com.droidsoft.pnrtracker.utils.Logger;
 
 /**
  * Created by mitesh on 14. 10. 9.
+ * Sync Dialog Class for Showing Sync Options
  */
 public class SyncDialog extends DialogFragment implements DialogInterface.OnClickListener {
     private String pnrNo;
@@ -33,8 +35,7 @@ public class SyncDialog extends DialogFragment implements DialogInterface.OnClic
     @Override
     public void onClick(DialogInterface dialogInterface, int i) {
         Logger.LogD("Interval + " + i);
-        SyncInterface syncInterface = SimpleSync.createSimpleSync(getActivity().getApplicationContext());
-        syncInterface.addSyncRequest(pnrNo, SyncInterface.SyncIntervals.getIntervalfromIndex(i));
-
+        TicketDatabaseInterface ticketDatabaseInterface = TicketDbImpl.createTicketDBImpl(getActivity().getApplicationContext());
+        ticketDatabaseInterface.changePNRSync(pnrNo, SyncInterface.SyncIntervals.getIntervalFromIndex(i));
     }
 }
