@@ -14,6 +14,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class SyncService extends Service {
+    
     // constant
     public static final long NOTIFY_INTERVAL = SyncInterface.SyncIntervals.EVERY_15_MINUTES; // 15 minutes
     private static boolean isCreated = false;
