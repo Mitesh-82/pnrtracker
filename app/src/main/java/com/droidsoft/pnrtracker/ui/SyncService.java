@@ -14,7 +14,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class SyncService extends Service {
-    
+
     // constant
     public static final long NOTIFY_INTERVAL = SyncInterface.SyncIntervals.EVERY_15_MINUTES; // 15 minutes
     private static boolean isCreated = false;
@@ -30,6 +30,8 @@ public class SyncService extends Service {
         if (!isCreated) {
             Intent intent = new Intent(context, SyncService.class);
             context.startService(intent);
+
+            //ok they agreed for teaching me
         }
 
     }
