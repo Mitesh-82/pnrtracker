@@ -6,7 +6,9 @@ import com.droidsoft.pnrtracker.database.TicketDatabaseInterface;
 import com.droidsoft.pnrtracker.database.TicketDbImpl;
 import com.droidsoft.pnrtracker.datatypes.Ticket;
 import com.droidsoft.pnrtracker.parser.JsonResponseParser;
-import com.droidsoft.pnrtracker.webinterface.HttpBasedTicketFetcher;
+import com.droidsoft.pnrtracker.webinterface.IndianRailGovServer;
+import com.droidsoft.pnrtracker.webinterface.Kirant400Server;
+import com.droidsoft.pnrtracker.webinterface.RailwayServerInterface;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -18,7 +20,7 @@ import java.util.ArrayList;
 public class SyncImpl extends SyncInterface {
     private static SyncImpl myself = null;
     Context context;
-    private HttpBasedTicketFetcher httpBasedTicketFetcher;
+    private RailwayServerInterface railwayServerInterface;
     private TicketDatabaseInterface ticketDatabaseInterface;
     private int requestCounter = 0;
 
@@ -26,7 +28,8 @@ public class SyncImpl extends SyncInterface {
     private SyncImpl(Context context) {
         super();
         this.context = context;
-        httpBasedTicketFetcher = new HttpBasedTicketFetcher();
+//        railwayServerInterface = new Kirant400Server();
+        railwayServerInterface = new IndianRailGovServer();
 
         ticketDatabaseInterface = TicketDbImpl.createTicketDBImpl(context);
     }
@@ -55,7 +58,7 @@ public class SyncImpl extends SyncInterface {
             syncListener.onSyncStart();
         }
 
-        WorkerThread thread = new WorkerThread(pnrNo, httpBasedTicketFetcher);
+        WorkerThread thread = new WorkerThread(pnrNo, railwayServerInterface);
         thread.start();
 
     }
@@ -63,12 +66,12 @@ public class SyncImpl extends SyncInterface {
 
     class WorkerThread extends Thread {
         String Pnr;
-        HttpBasedTicketFetcher httpBasedTicketFetcher;
+        RailwayServerInterface railwayServerInterface;
         Ticket ticket;
 
-        WorkerThread(String pnr, HttpBasedTicketFetcher httpBasedTicketFetcher) {
+        WorkerThread(String pnr, RailwayServerInterface railwayServerInterface) {
             Pnr = pnr;
-            this.httpBasedTicketFetcher = httpBasedTicketFetcher;
+            this.railwayServerInterface = railwayServerInterface;
         }
 
         @Override
@@ -77,7 +80,7 @@ public class SyncImpl extends SyncInterface {
 
             try {
                 String serverResponse;
-                serverResponse = httpBasedTicketFetcher.getTicketData(Pnr);
+                serverResponse = railwayServerInterface.getTicketData_BlockingCall(Pnr);
 
                 ticket = JsonResponseParser.readTicketResponse(serverResponse);
 

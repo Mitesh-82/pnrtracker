@@ -47,6 +47,8 @@ public class TicketListActivity extends Activity implements View.OnClickListener
         buttonSyncAll = (ImageButton) findViewById(R.id.imageButton_SyncAll);
 
         editTextPnrSearch.setFilters(new InputFilter[]{new InputFilter.LengthFilter(10)});
+
+        editTextPnrSearch.setText("8234426462");
         buttonSearchPnr.setOnClickListener(this);
         buttonSyncAll.setOnClickListener(this);
 

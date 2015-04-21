@@ -13,13 +13,14 @@ import java.io.IOException;
 /**
  * Created by mitesh.patel on 15-09-2014.
  */
-public class HttpBasedTicketFetcher {
+public class Kirant400Server implements RailwayServerInterface {
 
     private HttpClient httpClient;
 
-    public String getTicketData(String pnr) throws IOException {
+    @Override
+    public String getTicketData_BlockingCall(String pnr) throws IOException {
 
-        Logger.LogD("getTicketData getting called for PNR: -" + pnr);
+        Logger.LogD("getTicketData_BlockingCall getting called for PNR: -" + pnr);
 
         String serverResponse = "";
 
@@ -35,4 +36,20 @@ public class HttpBasedTicketFetcher {
 
         return serverResponse;
     }
+
+    @Override
+    public void getTicketData_Async(String PnrNo) {
+
+    }
+
+    @Override
+    public void setRailwayServerResponseListener(RailwayServerResponseListener railwayServerResponseListener) {
+
+    }
+
+    @Override
+    public void removeRailwayServerResponseListener(RailwayServerResponseListener railwayServerResponseListener) {
+
+    }
+
 }
